@@ -1,0 +1,38 @@
+<div class="bg-green-200 min-h-screen min-w-screen p-4 text-sm">
+    <div class="flex flex-col justify-center items-center">
+        <h1 class="text-2xl font-bold text-gray-800">Control de Caja</h1>
+    </div>
+    <div class="flex justify-center items-center gap-4">
+        <button (click)="openNewSellModal()">Añadir nueva venta</button>
+        <button (click)="openSellsHistoryModal()">Ver ventas</button>
+        <button>Cerrar caja</button>
+    </div>
+    <div class="flex gap-4">
+        @if(sells().length < 0){ <div class="flex justify-center items-center w-full h-full text-gray-800">
+            Sin ventas para mostrar hoy
+    </div>
+    }
+    <table class="w-full text-center border-separate border-spacing-y-4">
+        <thead>
+            <tr>
+                <th class="w-1/4">Fecha</th>
+                <th class="w-1/4">Hora</th>
+                <th class="w-1/4">Tipo</th>
+                <th class="w-1/4">Monto</th>
+                <th class="w-1/4">Comentarios</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (sell of sells(); track sell.id) {
+            <tr class="bg-white shadow-sm rounded-lg">
+                <td class="p-4">{{ sell.date | date:'dd/MM' }}</td>
+                <td class="p-4">{{ sell.date | date:'HH:mm' }}</td>
+                <td class="p-4">{{ sell.type }}</td>
+                <td class="p-4 bg-green-100 rounded text-green-800 font-bold">${{ sell.amount }}</td>
+                <td class="p-4">@if(sell.comments){ {{ sell.comments }} }@else{-}</td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>
+</div>

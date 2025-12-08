@@ -1,0 +1,36 @@
+/* estilos base para el mega-dropdown */
+.mega-dropdown {
+    min-width: 640px;
+    max-width: 90vw;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    display: flex;
+}
+
+/* pequeña mejora visual en la lista */
+.mega-dropdown ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* hover submenus (simple) */
+.mega-dropdown .grid {
+    gap: 0.5rem;
+}
+
+/* responsive: en pantallas chicas, apila columnas */
+@media (max-width: 768px) {
+    .mega-dropdown {
+        flex-direction: column;
+        min-width: 320px;
+    }
+
+    .mega-dropdown .w-48 {
+        width: 100%;
+    }
+}
+
+/* ajustes visuales (opcional si tenés tailwind ya presente) */
+button {
+    cursor: pointer;
+}

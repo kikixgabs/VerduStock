@@ -1,0 +1,32 @@
+<div class="bg-white p-6 rounded-lg w-[400px] flex flex-col gap-4 shadow-xl">
+    <h1 class="text-xl font-bold text-gray-800">Editar Producto</h1>
+
+    <div class="flex flex-col gap-2">
+        <div class="text-2xl font-bold text-gray-600">
+            {{data.name}}
+        </div>
+    </div>
+
+    <div class="flex flex-col gap-2">
+        <label class="text-sm font-medium text-gray-600">Stock</label>
+        <input type="number" [(ngModel)]="data.stock"
+            class="border border-gray-300 rounded p-2 focus:outline-none focus:border-blue-500" />
+    </div>
+
+    <div class="flex flex-col gap-2">
+        <label class="text-sm font-medium text-gray-600">Medida</label>
+        <select [(ngModel)]="data.measurement"
+            class="border border-gray-300 rounded p-2 focus:outline-none focus:border-blue-500">
+            @for(measurement of measurements; track $index){
+            <option [value]="measurement">{{ measurement }}</option>
+            }
+        </select>
+    </div>
+
+    <div class="flex justify-end gap-2 mt-4">
+        <button (click)="close()"
+            class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition-colors">Cancelar</button>
+        <button (click)="close()"
+            class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">Guardar</button>
+    </div>
+</div>

@@ -1,0 +1,25 @@
+<div class="bg-gray-100 p-4 gap-4 flex flex-col rounded shadow-lg w-full h-full">
+    <h1 class="text-2xl font-bold">Historial de Ventas</h1>
+    <table class="w-full text-center border-separate border-spacing-y-4">
+        <thead>
+            <tr>
+                <th class="w-1/4">Fecha</th>
+                <th class="w-1/4">Hora</th>
+                <th class="w-1/4">Tipo</th>
+                <th class="w-1/4">Monto</th>
+                <th class="w-1/4">Comentarios</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (sell of sells(); track sell.id) {
+            <tr class="bg-white shadow-sm rounded-lg">
+                <td class="p-4">{{ sell.date | date:'dd/MM' }}</td>
+                <td class="p-4">{{ sell.date | date:'HH:mm' }}</td>
+                <td class="p-4">{{ sell.type }}</td>
+                <td class="p-4 bg-green-100 rounded text-green-800 font-bold">${{ sell.amount }}</td>
+                <td class="p-4">@if(sell.comments){ {{ sell.comments }} }@else{-}</td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>

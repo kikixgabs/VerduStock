@@ -1,0 +1,20 @@
+<div class="bg-white p-6 rounded-lg w-25% flex flex-col gap-4 shadow-xl">
+    <h1 class="text-2xl font-bold text-gray-800">Guardar y copiar stock</h1>
+    <h2>Revisar bien antes de guardar</h2>
+
+    <div class="whitespace-pre-wrap p-2 border border-gray-200 rounded">
+        @for(product of data; track $index) {
+        <div>
+            {{product.name}} - {{product.stock}} - {{product.measurement}}
+        </div>
+        }
+    </div>
+
+    <div class="flex justify-end gap-2 mt-4">
+        <button (click)="close()"
+            class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition-colors">Cancelar</button>
+        <button (click)="copyToClipboard()"
+            class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">Copiar al
+            portapapeles</button>
+    </div>
+</div>

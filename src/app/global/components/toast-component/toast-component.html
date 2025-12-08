@@ -1,0 +1,7 @@
+<div class="toast-container">
+    @for (toast of toasts; track toast.id) {
+    <div class="toast" [class.visible]="toast.visible" [class.shrinking]="toast.shrinking">
+        {{ toast.message }}
+    </div>
+    }
+</div>
