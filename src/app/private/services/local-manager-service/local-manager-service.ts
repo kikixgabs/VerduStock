@@ -12,6 +12,7 @@ export class LocalManagerService {
     }
   }
 
+
   loadStockList() {
     if (typeof localStorage !== 'undefined') {
       const stock = localStorage.getItem('stockList');
