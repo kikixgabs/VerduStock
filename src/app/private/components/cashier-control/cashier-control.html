@@ -1,38 +1,80 @@
-<div class="bg-green-200 min-h-screen min-w-screen p-4 text-sm">
-    <div class="flex flex-col justify-center items-center">
+<div class="bg-green-200 min-h-screen w-full p-4 text-sm">
+    <div class="flex flex-col justify-center items-center mb-4">
         <h1 class="text-2xl font-bold text-gray-800">Control de Caja</h1>
     </div>
-    <div class="flex justify-center items-center gap-4">
-        <button (click)="openNewSellModal()">Añadir nueva venta</button>
-        <button (click)="openSellsHistoryModal()">Ver ventas</button>
-        <button>Cerrar caja</button>
+    <div
+        class="flex flex-col sm:flex-row flex-wrap justify-center items-center gap-4 mb-4 w-full sm:w-auto px-4 sm:px-0">
+        <button
+            class="bg-white px-4 py-3 sm:py-2 rounded shadow hover:bg-gray-50 w-full sm:w-auto text-center font-medium active:scale-95 transition-transform"
+            (click)="openNewSellModal()">Añadir nueva
+            venta</button>
+        <button
+            class="bg-white px-4 py-3 sm:py-2 rounded shadow hover:bg-gray-50 w-full sm:w-auto text-center font-medium active:scale-95 transition-transform"
+            (click)="openSellsHistoryModal()">Ver
+            ventas</button>
+        <button
+            class="bg-white px-4 py-3 sm:py-2 rounded shadow hover:bg-gray-50 w-full sm:w-auto text-center font-medium active:scale-95 transition-transform"
+            (click)="openCashClosingModal()">Cerrar
+            caja</button>
     </div>
-    <div class="flex gap-4">
-        @if(sells().length < 0){ <div class="flex justify-center items-center w-full h-full text-gray-800">
+    <div class="w-full overflow-x-auto">
+        @if(sells().length === 0){ <div class="flex justify-center items-center w-full min-h-[200px] text-gray-800">
             Sin ventas para mostrar hoy
-    </div>
-    }
-    <table class="w-full text-center border-separate border-spacing-y-4">
-        <thead>
-            <tr>
-                <th class="w-1/4">Fecha</th>
-                <th class="w-1/4">Hora</th>
-                <th class="w-1/4">Tipo</th>
-                <th class="w-1/4">Monto</th>
-                <th class="w-1/4">Comentarios</th>
-            </tr>
-        </thead>
-        <tbody>
+        </div>}
+        @else {
+        <!-- Desktop Table -->
+        <div class="hidden md:block">
+            <table class="w-full text-center border-separate border-spacing-y-4">
+                <thead>
+                    <tr>
+                        <th class="w-1/4">Fecha</th>
+                        <th class="w-1/4">Hora</th>
+                        <th class="w-1/4">Tipo</th>
+                        <th class="w-1/4">Monto</th>
+                        <th class="w-1/4">Comentarios</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (sell of sells(); track sell.id) {
+                    <tr class="bg-white shadow-sm rounded-lg hover:shadow-md transition-shadow">
+                        <td class="p-4 whitespace-nowrap">{{ sell.date | date:'dd/MM' }}</td>
+                        <td class="p-4 whitespace-nowrap">{{ sell.date | date:'HH:mm' }}</td>
+                        <td class="p-4 whitespace-nowrap">{{ sell.type }}</td>
+                        <td class="p-4 bg-green-100 rounded text-green-800 font-bold whitespace-nowrap">${{ sell.amount
+                            }}
+                        </td>
+                        <td class="p-4 min-w-[200px]">@if(sell.comments){ {{ sell.comments }} }@else{-}</td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Mobile Cards -->
+        <div class="md:hidden flex flex-col gap-3">
             @for (sell of sells(); track sell.id) {
-            <tr class="bg-white shadow-sm rounded-lg">
-                <td class="p-4">{{ sell.date | date:'dd/MM' }}</td>
-                <td class="p-4">{{ sell.date | date:'HH:mm' }}</td>
-                <td class="p-4">{{ sell.type }}</td>
-                <td class="p-4 bg-green-100 rounded text-green-800 font-bold">${{ sell.amount }}</td>
-                <td class="p-4">@if(sell.comments){ {{ sell.comments }} }@else{-}</td>
-            </tr>
+            <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+                <div class="flex justify-between items-start mb-2">
+                    <div class="flex flex-col">
+                        <span class="font-semibold text-gray-800 text-lg">${{ sell.amount }}</span>
+                        <div class="flex gap-1 text-xs text-gray-500">
+                            <span>{{ sell.date | date:'dd/MM' }}</span>
+                            <span>•</span>
+                            <span>{{ sell.date | date:'HH:mm' }}</span>
+                        </div>
+                    </div>
+                    <span class="bg-blue-50 text-blue-700 text-xs font-bold px-2 py-1 rounded-full uppercase">
+                        {{ sell.type }}
+                    </span>
+                </div>
+                @if(sell.comments) {
+                <div class="mt-2 text-sm text-gray-600 bg-gray-50 p-2 rounded">
+                    {{ sell.comments }}
+                </div>
+                }
+            </div>
             }
-        </tbody>
-    </table>
-</div>
+        </div>
+        }
+    </div>
 </div>

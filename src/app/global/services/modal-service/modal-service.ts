@@ -43,7 +43,6 @@ export class ModalService {
     const element = this.overlayRef.overlayElement.querySelector('app-create-todo-component, [app-create-todo-component], div');
 
     if (element) {
-      // Animación de salida
       await gsap.to(element, {
         duration: 0.35,
         opacity: 0,

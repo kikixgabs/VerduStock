@@ -1,12 +1,13 @@
-<div class="bg-green-200 min-h-screen min-w-screen p-4 text-sm" (mouseenter)="enterMenu()" (mouseleave)="leaveMenu()">
+<div class="bg-green-200 min-h-screen w-full p-4 text-sm" (mouseenter)="enterMenu()" (mouseleave)="leaveMenu()">
   <div class="flex flex-col justify-center items-center">
     <h1 class="text-2xl font-bold text-gray-800">Control de Stock</h1>
 
-    <div class="flex gap-2 m-2">
-      <div class="relative">
+    <div class="flex flex-col sm:flex-row gap-2 m-2 w-full sm:w-auto">
+      <div class="relative w-full sm:w-auto flex justify-center">
 
         <!-- BOTÓN QUE ABRE EL MEGA DROPDOWN -->
-        <button class="px-4 py-2 bg-white border rounded shadow flex items-center gap-2 text-sm sm:text-base"
+        <button
+          class="px-4 py-3 sm:py-2 bg-white border rounded shadow flex items-center justify-between gap-2 text-base w-full sm:w-auto font-medium active:scale-95 transition-transform"
           (click)="toggleMenu(); $event.stopPropagation()" (mouseenter)="openMenu()" aria-haspopup="true"
           [attr.aria-expanded]="menuOpen()">
           AÑADIR PRODUCTOS
@@ -16,86 +17,104 @@
         <!-- MEGA DROPDOWN -->
         @if(menuOpen()) {
         <ng-container>
-          <div class="mega-dropdown absolute z-50 mt-2 p-4 bg-white border shadow-lg rounded flex" role="menu"
-            (click)="$event.stopPropagation()" (mouseenter)="enterMenu()" (mouseleave)="leaveMenu()">
+          <div
+            class="mega-dropdown fixed inset-0 z-50 bg-white flex flex-col md:absolute md:inset-auto md:top-full md:left-0 md:mt-2 md:flex-row md:w-[800px] md:h-auto md:max-h-[80vh] md:rounded-lg md:shadow-xl md:border p-0 md:overflow-hidden"
+            role="menu" (click)="$event.stopPropagation()" (mouseenter)="enterMenu()" (mouseleave)="leaveMenu()">
 
-            <!-- COLUMNA IZQUIERDA: TEMPORADAS -->
-            <div class="w-48">
-              <ul class="divide-y">
-                @for (season of seasonsOrder(); track season) {
-                <li class="py-2 px-2 hover:bg-gray-100 cursor-pointer flex justify-between items-center"
-                  (mouseenter)="setHoveredSeason(season)" (click)="setHoveredSeason(season); $event.stopPropagation()">
-                  <div class="flex flex-col">
-                    <span class="font-semibold">{{ seasonLabel(season) }}</span>
-                    <small class="text-sm text-gray-500">
-                      {{ productsBySeason(season).length }} productos
-                    </small>
-                  </div>
-
-                  <div class="flex flex-col items-end gap-1">
-                    <button class="text-xs px-2 py-1 border rounded hover:bg-gray-50"
-                      (click)="addAllSeasonProduct(season); $event.stopPropagation()">
-                      Añadir todo
-                    </button>
-
-                    <button class="text-xs px-2 py-1 text-red-600"
-                      (click)="removeSeasonProduct(season); $event.stopPropagation()">
-                      Quitar todo
-                    </button>
-                  </div>
-                </li>
-                }
-              </ul>
+            <!-- MOBILE HEADER -->
+            <div class="flex justify-between items-center p-4 border-b md:hidden bg-gray-50">
+              <h3 class="font-bold text-lg">Añadir Productos</h3>
+              <button (click)="toggleMenu()" class="p-2 text-gray-500 hover:text-gray-700">✕</button>
             </div>
 
-            <!-- COLUMNA DERECHA: PRODUCTOS -->
-            <div class="ml-4 flex-1 max-h-80 overflow-auto">
-              <ng-container *ngIf="hoveredSeason(); else noSeason">
-                <div class="flex justify-between items-center mb-2">
-                  <h3 class="font-bold">{{ seasonLabel(hoveredSeason()!) }}</h3>
-                  <small class="text-sm text-gray-500">
-                    {{ productsBySeason(hoveredSeason()!).length }} productos
-                  </small>
-                </div>
+            <!-- WRAPPER for Flex Layout -->
+            <div class="flex flex-col md:flex-row flex-1 overflow-hidden h-full">
 
-                <div class="grid grid-cols-2 gap-2">
-                  @for (p of productsBySeason(hoveredSeason()!); track p.id) {
-                  <div class="p-2 border rounded flex justify-between items-center hover:bg-gray-50"
-                    (click)="$event.stopPropagation()">
+              <!-- COLUMNA IZQUIERDA: TEMPORADAS -->
+              <div
+                class="w-full md:w-56 border-b md:border-b-0 md:border-r overflow-y-auto max-h-[30vh] md:max-h-full bg-gray-50 md:bg-white">
+                <ul class="divide-y">
+                  @for (season of seasonsOrder(); track season) {
+                  <li
+                    class="py-3 px-4 md:py-2 md:px-2 hover:bg-green-50 cursor-pointer flex justify-between items-center transition-colors"
+                    [class.bg-green-100]="hoveredSeason() === season" (mouseenter)="setHoveredSeason(season)"
+                    (click)="setHoveredSeason(season); $event.stopPropagation()">
                     <div class="flex flex-col">
-                      <span class="font-semibold">{{ p.name }}</span>
-                      <small class="text-xs text-gray-500">
-                        {{ p.measurement }} · stock: {{ p.stock }}
+                      <span class="font-semibold">{{ seasonLabel(season) }}</span>
+                      <small class="text-sm text-gray-500">
+                        {{ productsBySeason(season).length }} productos
                       </small>
                     </div>
 
                     <div class="flex flex-col items-end gap-1">
-                      <button class="text-sm px-2 py-1 bg-green-500 text-white rounded"
-                        (click)="addOneProduct(p); $event.stopPropagation()">
-                        Añadir
+                      <button class="text-xs px-2 py-1 border rounded bg-white hover:bg-gray-50"
+                        (click)="addAllSeasonProduct(season); $event.stopPropagation()">
+                        Añadir todo
                       </button>
-                      <button class="text-sm px-2 py-1 border rounded text-red-600"
-                        (click)="removeOneProduct(p.id); $event.stopPropagation()">
-                        Eliminar
+
+                      <button class="text-xs px-2 py-1 text-red-600 hover:text-red-800"
+                        (click)="removeSeasonProduct(season); $event.stopPropagation()">
+                        Quitar todo
                       </button>
                     </div>
-                  </div>
+                  </li>
                   }
-                </div>
-              </ng-container>
+                </ul>
+              </div>
 
-              <ng-template #noSeason>
-                <div class="text-gray-500 italic">
-                  Pasa el mouse por una temporada para ver sus productos
-                </div>
-              </ng-template>
+              <!-- COLUMNA DERECHA: PRODUCTOS -->
+              <div class="flex-1 overflow-y-auto p-4 md:p-4 bg-white md:bg-gray-50 h-full">
+                <ng-container *ngIf="hoveredSeason(); else noSeason">
+                  <div
+                    class="sticky top-0 bg-white md:bg-gray-50 pb-2 z-10 border-b mb-2 flex justify-between items-center">
+                    <h3 class="font-bold text-xl">{{ seasonLabel(hoveredSeason()!) }}</h3>
+                    <small class="text-gray-500">{{ productsBySeason(hoveredSeason()!).length }} productos</small>
+                  </div>
+
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pb-20 md:pb-0">
+                    @for (p of productsBySeason(hoveredSeason()!); track p.id) {
+                    <div
+                      class="p-3 border rounded-lg bg-white flex justify-between items-center hover:shadow-sm transition-shadow"
+                      (click)="$event.stopPropagation()">
+                      <div class="flex flex-col">
+                        <span class="font-semibold text-gray-800">{{ p.name }}</span>
+                        <small class="text-xs text-gray-500">
+                          {{ p.measurement }} · stock: {{ p.stock }}
+                        </small>
+                      </div>
+
+                      <div class="flex flex-col items-end gap-2">
+                        <button
+                          class="text-sm px-3 py-1 bg-green-500 text-white rounded shadow hover:bg-green-600 transition-colors"
+                          (click)="addOneProduct(p); $event.stopPropagation()">
+                          Añadir
+                        </button>
+                        <button class="text-xs text-red-500 hover:underline"
+                          (click)="removeOneProduct(p.id); $event.stopPropagation()">
+                          Eliminar
+                        </button>
+                      </div>
+                    </div>
+                    }
+                  </div>
+                </ng-container>
+
+                <ng-template #noSeason>
+                  <div class="flex h-full items-center justify-center text-gray-400 italic p-8 text-center">
+                    <div class="flex flex-col items-center">
+                      <span class="text-4xl mb-2">👈</span>
+                      <span>Selecciona una temporada para ver sus productos</span>
+                    </div>
+                  </div>
+                </ng-template>
+              </div>
             </div>
           </div>
         </ng-container>
         }
 
         <!-- LISTA DE PRODUCTOS SELECCIONADOS -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full m-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full mt-6">
           @for (item of stockFiltered(); track item.id) {
           <div class="p-3 bg-white border rounded shadow flex justify-between items-center">
             <div class="flex flex-col">
@@ -117,13 +136,14 @@
           }
 
           @if (stockFiltered().length === 0) {
-          <div class="p-3 text-center text-gray-600 italic">
+          <div class="p-3 text-center text-gray-600 italic col-span-full">
             No hay productos seleccionados
           </div>
           }
         </div>
-        <div class="flex justify-end">
-          <button class="bg-green-500 text-white px-4 py-2 rounded" (click)="saveStock()">Guardar y generar
+        <div class="flex justify-end mt-4 w-full">
+          <button class="bg-green-500 text-white px-4 py-2 rounded shadow hover:bg-green-600 w-full sm:w-auto"
+            (click)="saveStock()">Guardar y generar
             mensaje</button>
         </div>
       </div>

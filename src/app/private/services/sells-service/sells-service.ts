@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { Sell, SellType } from '@app/private/models';
 import { LocalManagerService } from '../local-manager-service/local-manager-service';
 @Injectable({
@@ -7,6 +7,8 @@ import { LocalManagerService } from '../local-manager-service/local-manager-serv
 export class SellsService {
 
   localManager = inject(LocalManagerService);
+
+  sells = signal<Sell[]>(this.localManager.loadSells());
 
   createNewSell(amount: number, type: string, comments?: string) {
     const sell: Sell = {
@@ -17,6 +19,7 @@ export class SellsService {
       comments: comments
     }
     this.localManager.saveSell(sell);
+    this.sells.update((sells) => [...sells, sell]);
   }
 
 }

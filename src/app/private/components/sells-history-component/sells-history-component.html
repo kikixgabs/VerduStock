@@ -1,25 +1,62 @@
-<div class="bg-gray-100 p-4 gap-4 flex flex-col rounded shadow-lg w-full h-full">
-    <h1 class="text-2xl font-bold">Historial de Ventas</h1>
-    <table class="w-full text-center border-separate border-spacing-y-4">
-        <thead>
-            <tr>
-                <th class="w-1/4">Fecha</th>
-                <th class="w-1/4">Hora</th>
-                <th class="w-1/4">Tipo</th>
-                <th class="w-1/4">Monto</th>
-                <th class="w-1/4">Comentarios</th>
-            </tr>
-        </thead>
-        <tbody>
+<div
+    class="bg-gray-100 w-full h-full md:w-[90%] md:max-w-6xl md:h-auto md:max-h-[90vh] md:rounded-lg p-2 md:p-4 gap-4 flex flex-col shadow-lg overflow-hidden">
+    <div class="flex justify-between items-center">
+        <h1 class="text-2xl font-bold">Historial de Ventas</h1>
+        <button (click)="close()" class="p-2 bg-gray-200 rounded hover:bg-gray-300 transition-colors">
+            <span class="md:hidden font-bold">✕</span>
+            <span class="hidden md:inline">Cerrar</span>
+        </button>
+    </div>
+    <div class="overflow-auto flex-1">
+        <!-- Desktop Table -->
+        <table class="hidden md:table w-full text-center border-separate border-spacing-y-4">
+            <thead>
+                <tr>
+                    <th class="w-1/4">Fecha</th>
+                    <th class="w-1/4">Hora</th>
+                    <th class="w-1/4">Tipo</th>
+                    <th class="w-1/4">Monto</th>
+                    <th class="w-1/4">Comentarios</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (sell of sells(); track sell.id) {
+                <tr class="bg-white shadow-sm rounded-lg hover:shadow-md transition-shadow">
+                    <td class="p-4 whitespace-nowrap">{{ sell.date | date:'dd/MM' }}</td>
+                    <td class="p-4 whitespace-nowrap">{{ sell.date | date:'HH:mm' }}</td>
+                    <td class="p-4 whitespace-nowrap">{{ sell.type }}</td>
+                    <td class="p-4 bg-green-100 rounded text-green-800 font-bold whitespace-nowrap">${{ sell.amount }}
+                    </td>
+                    <td class="p-4 min-w-[200px]">@if(sell.comments){ {{ sell.comments }} }@else{-}</td>
+                </tr>
+                }
+            </tbody>
+        </table>
+
+        <!-- Mobile Cards -->
+        <div class="md:hidden flex flex-col gap-3 pb-4">
             @for (sell of sells(); track sell.id) {
-            <tr class="bg-white shadow-sm rounded-lg">
-                <td class="p-4">{{ sell.date | date:'dd/MM' }}</td>
-                <td class="p-4">{{ sell.date | date:'HH:mm' }}</td>
-                <td class="p-4">{{ sell.type }}</td>
-                <td class="p-4 bg-green-100 rounded text-green-800 font-bold">${{ sell.amount }}</td>
-                <td class="p-4">@if(sell.comments){ {{ sell.comments }} }@else{-}</td>
-            </tr>
+            <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+                <div class="flex justify-between items-start mb-2">
+                    <div class="flex flex-col">
+                        <span class="font-bold text-gray-800 text-lg">${{ sell.amount }}</span>
+                        <div class="flex gap-1 text-xs text-gray-500">
+                            <span>{{ sell.date | date:'dd/MM/yy' }}</span>
+                            <span>•</span>
+                            <span>{{ sell.date | date:'HH:mm' }}</span>
+                        </div>
+                    </div>
+                    <span class="bg-green-100 text-green-800 text-xs font-bold px-2 py-1 rounded-full uppercase">
+                        {{ sell.type }}
+                    </span>
+                </div>
+                @if(sell.comments) {
+                <div class="mt-2 text-sm text-gray-600 italic bg-gray-50 p-2 rounded border border-gray-100">
+                    {{ sell.comments }}
+                </div>
+                }
+            </div>
             }
-        </tbody>
-    </table>
+        </div>
+    </div>
 </div>
