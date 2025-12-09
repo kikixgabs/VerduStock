@@ -1,21 +1,29 @@
 <div
-    class="flex flex-col justify-center items-center gap-4 p-4 border bg-gray-200 w-full max-w-lg mx-auto h-auto md:h-full border-gray-200 rounded">
+    class="flex flex-col justify-center gap-4 p-4 border bg-gray-200 w-[100%] mx-auto h-auto md:h-full border-gray-200 rounded">
     <div class="flex text-2xl font-bold pb-4">
         Nueva Venta
     </div>
-    <div class="flex flex-col gap-2">
-        <span>Monto:</span>
-        <input class="w-full border border-black rounded p-2" [(ngModel)]="amount" type="number" id="amount">
-        <span>Tipo de Pago:</span>
-        <select class="w-full border border-black rounded p-2" [(ngModel)]="type" name="type" id="type">
-            <option [value]="SellType.CASH">{{SellType.CASH}}</option>
-            <option [value]="SellType.TRANSFER">{{SellType.TRANSFER}}</option>
-            <option [value]="SellType.CREDIT">{{SellType.CREDIT}}</option>
-            <option [value]="SellType.DEBIT">{{SellType.DEBIT}}</option>
-        </select>
-        <span>Comentarios:</span>
-        <textarea [(ngModel)]="comments" name="comments" id="comments" class="w-full border border-black rounded"
-            cols="10" rows="10"></textarea>
+    <div class="flex flex-col gap-4 w-full">
+        <div class="flex gap-4 w-full">
+            <div class="flex flex-col w-1/2 gap-2">
+                <span>Monto:</span>
+                <input class="w-full border border-black rounded p-2" [(ngModel)]="amount" type="number" id="amount">
+            </div>
+            <div class="flex flex-col w-1/2 gap-2">
+                <span>Tipo de Pago:</span>
+                <select class="w-full border border-black rounded p-2" [(ngModel)]="type" name="type" id="type">
+                    <option [value]="SellType.CASH">{{SellType.CASH}}</option>
+                    <option [value]="SellType.TRANSFER">{{SellType.TRANSFER}}</option>
+                    <option [value]="SellType.CREDIT">{{SellType.CREDIT}}</option>
+                    <option [value]="SellType.DEBIT">{{SellType.DEBIT}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="flex flex-col gap-2">
+            <span>Comentarios:</span>
+            <textarea [(ngModel)]="comments" name="comments" id="comments"
+                class="w-full border border-black rounded p-2" rows="5"></textarea>
+        </div>
     </div>
     <div class="flex justify-end gap-2 p-4">
         <button

@@ -8,7 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:VerduStock": "node dist/VerduStock/server/server.mjs",
-    "deploy": "ng build --configuration production && powershell -Command \"Copy-Item 'dist\\VerduStock\\browser\\index.html' -Destination 'dist\\VerduStock\\browser\\404.html' -Force\" && npx angular-cli-ghpages --dir dist/VerduStock/browser"
+    "deploy": "ng build --configuration production --base-href /VerduStock/ && powershell -Command \"Copy-Item 'dist\\VerduStock\\browser\\index.html' -Destination 'dist\\VerduStock\\browser\\404.html' -Force\" && npx angular-cli-ghpages --dir dist/VerduStock/browser --repo=https://github.com/kikixgabs/VerduStock.git"
   },
   "prettier": {
     "printWidth": 100,
