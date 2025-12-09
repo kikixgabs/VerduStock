@@ -2,9 +2,10 @@
   <div class="flex flex-col justify-center items-center">
     <h1 class="text-2xl font-bold text-gray-800">Control de Stock</h1>
 
-    <div class="flex flex-col sm:flex-row gap-2 m-2 w-full sm:w-auto">
-      <div class="relative w-full sm:w-auto flex justify-center">
+    <div class="flex flex-col w-full gap-6 mt-4">
 
+      <!-- DROPDOWN AREA -->
+      <div class="relative w-full flex justify-center z-30">
         <!-- BOTÓN QUE ABRE EL MEGA DROPDOWN -->
         <button
           class="px-4 py-3 sm:py-2 bg-white border rounded shadow flex items-center justify-between gap-2 text-base w-full sm:w-auto font-medium active:scale-95 transition-transform"
@@ -112,39 +113,41 @@
           </div>
         </ng-container>
         }
+      </div>
 
-        <!-- LISTA DE PRODUCTOS SELECCIONADOS -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full mt-6">
-          @for (item of stockFiltered(); track item.id) {
-          <div class="p-3 bg-white border rounded shadow flex justify-between items-center">
-            <div class="flex flex-col">
-              <span class="font-semibold">{{ item.name }}</span>
-              <small class="text-sm text-gray-500">
-                {{ item.stock }} — {{ item.measurement }}
-              </small>
-            </div>
-            <div class="flex gap-2">
-              <button class="text-sm px-2 py-1 border rounded bg-blue-500 text-white" (click)="editProduct(item)">
-                Editar
-              </button>
-              <button class="text-sm px-2 py-1 border rounded bg-red-500 text-white"
-                (click)="removeOneProduct(item.id)">
-                Eliminar
-              </button>
-            </div>
+      <!-- LISTA DE PRODUCTOS SELECCIONADOS -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full z-10">
+        @for (item of stockFiltered(); track item.id) {
+        <div class="p-3 bg-white border rounded shadow flex justify-between items-center">
+          <div class="flex flex-col">
+            <span class="font-semibold">{{ item.name }}</span>
+            <small class="text-sm text-gray-500">
+              {{ item.stock }} — {{ item.measurement }}
+            </small>
           </div>
-          }
+          <div class="flex gap-2">
+            <button class="text-sm px-2 py-1 border rounded bg-blue-500 text-white" (click)="editProduct(item)">
+              Editar
+            </button>
+            <button class="text-sm px-2 py-1 border rounded bg-red-500 text-white" (click)="removeOneProduct(item.id)">
+              Eliminar
+            </button>
+          </div>
+        </div>
+        }
 
-          @if (stockFiltered().length === 0) {
-          <div class="p-3 text-center text-gray-600 italic col-span-full">
-            No hay productos seleccionados
-          </div>
-          }
+        @if (stockFiltered().length === 0) {
+        <div class="p-3 text-center text-gray-600 italic col-span-full">
+          No hay productos seleccionados
         </div>
-        <div class="flex justify-end mt-4 w-full">
-          <button class="bg-green-500 text-white px-4 py-2 rounded shadow hover:bg-green-600 w-full sm:w-auto"
-            (click)="saveStock()">Guardar y generar
-            mensaje</button>
-        </div>
+        }
+      </div>
+
+      <!-- BOTÓN GUARDAR -->
+      <div class="flex justify-end w-full">
+        <button class="bg-green-500 text-white px-4 py-2 rounded shadow hover:bg-green-600 w-full sm:w-auto"
+          (click)="saveStock()">
+          Guardar y generar mensaje
+        </button>
       </div>
     </div>

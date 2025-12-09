@@ -1,4 +1,17 @@
-<div class="w-full min-h-screen">
-    <!-- <app-stock-control></app-stock-control> -->
-    <app-cashier-control></app-cashier-control>
+<div class="min-h-screen bg-green-200 flex flex-col font-sans">
+    <h1 class="text-6xl text-center mt-4 font-bold text-gray-800">VerduStock</h1>
+    <nav
+        class="sticky top-4 z-50 mx-auto w-[95%] max-w-2xl mt-4 bg-white/90 backdrop-blur-xl border border-white/20 shadow-lg rounded-2xl p-1.5 flex justify-center gap-1">
+        <a routerLink="stock-control" routerLinkActive="bg-green-50 text-green-700 shadow-sm ring-1 ring-green-200"
+            class="flex-1 text-center px-6 py-3 rounded-xl text-sm font-bold text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition-all duration-300 outline-none select-none">
+            Control de Stock
+        </a>
+        <a routerLink="cashier-control" routerLinkActive="bg-blue-50 text-blue-700 shadow-sm ring-1 ring-blue-200"
+            class="flex-1 text-center px-6 py-3 rounded-xl text-sm font-bold text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition-all duration-300 outline-none select-none">
+            Caja
+        </a>
+    </nav>
+    <main class="flex-1 p-4 md:p-6 lg:p-8 max-w-7xl mx-auto w-full animate-fade-in">
+        <router-outlet></router-outlet>
+    </main>
 </div>

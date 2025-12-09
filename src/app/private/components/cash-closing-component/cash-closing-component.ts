@@ -7,7 +7,7 @@ import { ToastService } from '@app/global/services/toast-service/toast-service';
 
 @Component({
   selector: 'app-cash-closing-component',
-  imports: [DatePipe, CurrencyPipe],
+  imports: [DatePipe],
   templateUrl: './cash-closing-component.html',
   styleUrl: './cash-closing-component.css',
 })

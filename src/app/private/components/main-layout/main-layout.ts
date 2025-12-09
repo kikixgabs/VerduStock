@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
-import { StockControlComponent } from "../stock-control/stock-control";
-import { CashierControl } from "../cashier-control/cashier-control";
+import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'app-main-layout',
-  imports: [StockControlComponent, CashierControl],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive],
   templateUrl: './main-layout.html',
   styleUrl: './main-layout.css',
 })

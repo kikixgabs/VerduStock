@@ -18,9 +18,32 @@ export class CashierControl {
 
   modalService = inject(ModalService);
   sellsService = inject(SellsService);
+  sortOrder = signal<string>('date-desc');
+  filterType = signal<string>('all');
+
   sells = computed(() => {
     const today = new Date().toDateString();
-    return this.sellsService.sells().filter((sell: Sell) => new Date(sell.date).toDateString() === today);
+    let filtered = this.sellsService.sells().filter((sell: Sell) => new Date(sell.date).toDateString() === today);
+    const type = this.filterType();
+
+    if (type !== 'all') {
+      filtered = filtered.filter(sell => sell.type === type);
+    }
+
+    const order = this.sortOrder();
+
+    return filtered.sort((a, b) => {
+      const dateA = new Date(a.date).getTime();
+      const dateB = new Date(b.date).getTime();
+
+      switch (order) {
+        case 'date-desc': return dateB - dateA;
+        case 'date-asc': return dateA - dateB;
+        case 'amount-desc': return b.amount - a.amount;
+        case 'amount-asc': return a.amount - b.amount;
+        default: return 0;
+      }
+    });
   });
   openNewSellModal() {
     this.modalService.open(NewSellComponent, { data: { sells: this.sells() } });
