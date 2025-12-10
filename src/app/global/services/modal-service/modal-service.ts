@@ -7,7 +7,7 @@ import gsap from 'gsap';
 export class ModalService {
   overlay = inject(Overlay);
   injector = inject(Injector);
-  overlayRef: OverlayRef | null = null;
+  overlayRefs: OverlayRef[] = [];
 
   isOpen = signal(false);
   data = signal<any>(null);
@@ -15,16 +15,16 @@ export class ModalService {
   async open(component: any, data?: any) {
     this.data.set(data ?? null);
 
-    if (this.overlayRef) this.overlayRef.dispose();
-
-    this.overlayRef = this.overlay.create({
+    // Create a new overlay for every call, stacking them
+    const overlayRef = this.overlay.create({
       hasBackdrop: true,
       backdropClass: 'cdk-overlay-dark-backdrop',
       positionStrategy: this.overlay.position().global().centerHorizontally().centerVertically(),
       scrollStrategy: this.overlay.scrollStrategies.block(),
     });
 
-    this.overlayRef.backdropClick().subscribe(() => this.close());
+    // Clicking backdrop closes only the top-most modal
+    overlayRef.backdropClick().subscribe(() => this.close());
 
     const injector = Injector.create({
       parent: this.injector,
@@ -32,15 +32,20 @@ export class ModalService {
     });
 
     const portal = new ComponentPortal(component, null, injector);
-    this.overlayRef.attach(portal);
+    overlayRef.attach(portal);
 
+    this.overlayRefs.push(overlayRef);
     this.isOpen.set(true);
   }
 
   async close() {
-    if (!this.overlayRef) return;
+    const overlayRef = this.overlayRefs.pop(); // Get top-most modal
+    if (!overlayRef) {
+      this.isOpen.set(false);
+      return;
+    }
 
-    const element = this.overlayRef.overlayElement.querySelector('app-create-todo-component, [app-create-todo-component], div');
+    const element = overlayRef.overlayElement.querySelector('div'); // Generic selector
 
     if (element) {
       await gsap.to(element, {
@@ -52,8 +57,9 @@ export class ModalService {
       });
     }
 
-    this.overlayRef.dispose();
-    this.overlayRef = null;
-    this.isOpen.set(false);
+    overlayRef.dispose();
+
+    // Update state based on remaining modals
+    this.isOpen.set(this.overlayRefs.length > 0);
   }
 }

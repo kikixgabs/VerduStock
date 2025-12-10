@@ -1,10 +1,16 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { Product, Sell } from '@app/private/models/index';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LocalManagerService {
+
+  isTodayClosedSignal = signal<boolean>(false);
+
+  constructor() {
+    this.isTodayClosedSignal.set(this.isTodayClosed());
+  }
 
   saveStockList(stock: Product[]) {
     if (typeof localStorage !== 'undefined') {
@@ -39,6 +45,17 @@ export class LocalManagerService {
       const sells = this.loadSells();
       sells.push(sell);
       localStorage.setItem('sells', JSON.stringify(sells));
+    }
+  }
+
+  updateSell(sell: Sell) {
+    if (typeof localStorage !== 'undefined') {
+      const sells = this.loadSells();
+      const index = sells.findIndex((s: Sell) => s.id === sell.id);
+      if (index !== -1) {
+        sells[index] = sell;
+        localStorage.setItem('sells', JSON.stringify(sells));
+      }
     }
   }
 
@@ -83,6 +100,8 @@ export class LocalManagerService {
     cashCloseList.push(newClose);
     localStorage.setItem('cashCloseList', JSON.stringify(cashCloseList));
 
+    this.isTodayClosedSignal.set(true);
+
     return true;
   }
 
@@ -96,5 +115,18 @@ export class LocalManagerService {
       }));
     }
     return [];
+  }
+
+  isTodayClosed(): boolean {
+    if (typeof localStorage === 'undefined') return false;
+
+    const cashCloseList = this.loadCashCloseList();
+    const today = new Date();
+
+    return cashCloseList.some((close: any) =>
+      close.date.getFullYear() === today.getFullYear() &&
+      close.date.getMonth() === today.getMonth() &&
+      close.date.getDate() === today.getDate()
+    );
   }
 }

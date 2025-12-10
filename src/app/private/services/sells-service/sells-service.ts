@@ -22,4 +22,17 @@ export class SellsService {
     this.sells.update((sells) => [...sells, sell]);
   }
 
+  updateSell(sell: Sell) {
+    this.localManager.updateSell(sell);
+    this.sells.update((sells) => {
+      const index = sells.findIndex((s) => s.id === sell.id);
+      if (index !== -1) {
+        const updated = [...sells];
+        updated[index] = sell;
+        return updated;
+      }
+      return sells;
+    });
+  }
+
 }

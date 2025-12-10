@@ -18,8 +18,14 @@ export class CashierControl {
 
   modalService = inject(ModalService);
   sellsService = inject(SellsService);
+  localManager = inject(LocalManagerService);
+
   sortOrder = signal<string>('date-desc');
   filterType = signal<string>('all');
+  isClosed = this.localManager.isTodayClosedSignal; // Use singleton signal
+
+  constructor() { }
+
 
   sells = computed(() => {
     const today = new Date().toDateString();
@@ -53,6 +59,11 @@ export class CashierControl {
   }
   openCashClosingModal() {
     this.modalService.open(CashClosingComponent, { data: this.sells() });
+  }
+
+  editSell(sell: Sell) {
+    if (this.isClosed()) return;
+    this.modalService.open(NewSellComponent, { sell });
   }
 
 }

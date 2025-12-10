@@ -5,17 +5,18 @@
     <div
         class="flex flex-col sm:flex-row flex-wrap justify-center items-center gap-4 mb-4 w-full sm:w-auto px-4 sm:px-0">
         <button
-            class="bg-white px-4 py-3 sm:py-2 rounded shadow hover:bg-gray-50 w-full sm:w-auto text-center font-medium active:scale-95 transition-transform"
-            (click)="openNewSellModal()">Añadir nueva
+            class="bg-white px-4 py-3 sm:py-2 rounded shadow hover:bg-gray-50 w-full sm:w-auto text-center font-medium active:scale-95 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
+            [disabled]="isClosed()" (click)="openNewSellModal()">Añadir nueva
             venta</button>
         <button
             class="bg-white px-4 py-3 sm:py-2 rounded shadow hover:bg-gray-50 w-full sm:w-auto text-center font-medium active:scale-95 transition-transform"
             (click)="openSellsHistoryModal()">Ver
             ventas</button>
         <button
-            class="bg-white px-4 py-3 sm:py-2 rounded shadow hover:bg-gray-50 w-full sm:w-auto text-center font-medium active:scale-95 transition-transform"
-            (click)="openCashClosingModal()">Cerrar
-            caja</button>
+            class="bg-white px-4 py-3 sm:py-2 rounded shadow hover:bg-gray-50 w-full sm:w-auto text-center font-medium active:scale-95 transition-transform disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-500"
+            [disabled]="isClosed()" (click)="openCashClosingModal()">
+            {{ isClosed() ? 'Caja Cerrada' : 'Cerrar caja' }}
+        </button>
     </div>
 
     <!-- Sort Control -->
@@ -70,18 +71,30 @@
                         <th class="w-1/4">Tipo</th>
                         <th class="w-1/4">Monto</th>
                         <th class="w-1/4">Comentarios</th>
+                        <th class="w-1/4">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     @for (sell of sells(); track sell.id) {
                     <tr class="bg-white shadow-sm rounded-lg hover:shadow-md transition-shadow">
-                        <td class="p-4 whitespace-nowrap">{{ sell.date | date:'dd/MM' }}</td>
+                        <td class="p-4 whitespace-nowrap">
+                            {{ sell.date | date:'dd/MM' }}
+                            @if(sell.history && sell.history.length > 0){<span class="text-orange-500 font-bold ml-1"
+                                title="Venta editada">*</span>}
+                        </td>
                         <td class="p-4 whitespace-nowrap">{{ sell.date | date:'HH:mm' }}</td>
                         <td class="p-4 whitespace-nowrap">{{ sell.type }}</td>
                         <td class="p-4 bg-green-100 rounded text-green-800 font-bold whitespace-nowrap">${{ sell.amount
                             }}
                         </td>
                         <td class="p-4 min-w-[200px]">@if(sell.comments){ {{ sell.comments }} }@else{-}</td>
+                        <td class="p-4">
+                            <button
+                                class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                                [disabled]="isClosed()" (click)="editSell(sell)">
+                                Editar
+                            </button>
+                        </td>
                     </tr>
                     }
                 </tbody>
@@ -96,7 +109,11 @@
                     <div class="flex flex-col">
                         <span class="font-semibold text-gray-800 text-lg">${{ sell.amount }}</span>
                         <div class="flex gap-1 text-xs text-gray-500">
-                            <span>{{ sell.date | date:'dd/MM' }}</span>
+                            <span>
+                                {{ sell.date | date:'dd/MM' }}
+                                @if(sell.history && sell.history.length > 0){<span class="text-orange-500 font-bold"
+                                    title="Venta editada">*</span>}
+                            </span>
                             <span>•</span>
                             <span>{{ sell.date | date:'HH:mm' }}</span>
                         </div>
@@ -110,6 +127,14 @@
                     {{ sell.comments }}
                 </div>
                 }
+
+                <div class="mt-3 flex justify-end">
+                    <button
+                        class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                        [disabled]="isClosed()" (click)="editSell(sell)">
+                        Editar
+                    </button>
+                </div>
             </div>
             }
         </div>
