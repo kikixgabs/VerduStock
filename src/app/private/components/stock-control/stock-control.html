@@ -31,30 +31,30 @@
             <!-- WRAPPER for Flex Layout -->
             <div class="flex flex-col md:flex-row flex-1 overflow-hidden h-full">
 
-              <!-- COLUMNA IZQUIERDA: TEMPORADAS -->
+              <!-- COLUMNA IZQUIERDA: CATEGORIAS -->
               <div
                 class="w-full md:w-56 border-b md:border-b-0 md:border-r overflow-y-auto max-h-[30vh] md:max-h-full bg-gray-50 md:bg-white">
                 <ul class="divide-y">
-                  @for (season of seasonsOrder(); track season) {
+                  @for (cat of categories; track cat) {
                   <li
                     class="py-3 px-4 md:py-2 md:px-2 hover:bg-green-50 cursor-pointer flex justify-between items-center transition-colors"
-                    [class.bg-green-100]="hoveredSeason() === season" (mouseenter)="setHoveredSeason(season)"
-                    (click)="setHoveredSeason(season); $event.stopPropagation()">
+                    [class.bg-green-100]="hoveredCategory() === cat" (mouseenter)="setHoveredCategory(cat)"
+                    (click)="setHoveredCategory(cat); $event.stopPropagation()">
                     <div class="flex flex-col">
-                      <span class="font-semibold">{{ seasonLabel(season) }}</span>
+                      <span class="font-semibold">{{ categoryLabel(cat) }}</span>
                       <small class="text-sm text-gray-500">
-                        {{ productsBySeason(season).length }} productos
+                        {{ productsByCategory(cat).length }} productos
                       </small>
                     </div>
 
                     <div class="flex flex-col items-end gap-1">
                       <button class="text-xs px-2 py-1 border rounded bg-white hover:bg-gray-50"
-                        (click)="addAllSeasonProduct(season); $event.stopPropagation()">
+                        (click)="addAllCategoryProduct(cat); $event.stopPropagation()">
                         Añadir todo
                       </button>
 
                       <button class="text-xs px-2 py-1 text-red-600 hover:text-red-800"
-                        (click)="removeSeasonProduct(season); $event.stopPropagation()">
+                        (click)="removeCategoryProduct(cat); $event.stopPropagation()">
                         Quitar todo
                       </button>
                     </div>
@@ -65,15 +65,15 @@
 
               <!-- COLUMNA DERECHA: PRODUCTOS -->
               <div class="flex-1 overflow-y-auto p-4 md:p-4 bg-white md:bg-gray-50 h-full">
-                <ng-container *ngIf="hoveredSeason(); else noSeason">
+                <ng-container *ngIf="hoveredCategory(); else noCategory">
                   <div
                     class="sticky top-0 bg-white md:bg-gray-50 pb-2 z-10 border-b mb-2 flex justify-between items-center">
-                    <h3 class="font-bold text-xl">{{ seasonLabel(hoveredSeason()!) }}</h3>
-                    <small class="text-gray-500">{{ productsBySeason(hoveredSeason()!).length }} productos</small>
+                    <h3 class="font-bold text-xl">{{ categoryLabel(hoveredCategory()!) }}</h3>
+                    <small class="text-gray-500">{{ productsByCategory(hoveredCategory()!).length }} productos</small>
                   </div>
 
                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pb-20 md:pb-0">
-                    @for (p of productsBySeason(hoveredSeason()!); track p.id) {
+                    @for (p of productsByCategory(hoveredCategory()!); track p.id) {
                     <div
                       class="p-3 border rounded-lg bg-white flex justify-between items-center hover:shadow-sm transition-shadow"
                       (click)="$event.stopPropagation()">
@@ -100,11 +100,11 @@
                   </div>
                 </ng-container>
 
-                <ng-template #noSeason>
+                <ng-template #noCategory>
                   <div class="flex h-full items-center justify-center text-gray-400 italic p-8 text-center">
                     <div class="flex flex-col items-center">
                       <span class="text-4xl mb-2">👈</span>
-                      <span>Selecciona una temporada para ver sus productos</span>
+                      <span>Selecciona una categoría para ver sus productos</span>
                     </div>
                   </div>
                 </ng-template>
@@ -129,7 +129,8 @@
             <button class="text-sm px-2 py-1 border rounded bg-blue-500 text-white" (click)="editProduct(item)">
               Editar
             </button>
-            <button class="text-sm px-2 py-1 border rounded bg-red-500 text-white" (click)="removeOneProduct(item.id)">
+            <button animateClick="zoomOut" class="text-sm px-2 py-1 border rounded bg-red-500 text-white"
+              (click)="removeOneProduct(item.id)">
               Eliminar
             </button>
           </div>

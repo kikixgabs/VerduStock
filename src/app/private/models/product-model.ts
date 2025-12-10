@@ -1,14 +1,8 @@
 export enum ProductType {
-    FRUIT = 'FRUIT',
-    VEGETABLE = 'VEGETABLE',
-}
-
-export enum Season {
-    WINTER = 'WINTER',
-    SPRING = 'SPRING',
-    SUMMER = 'SUMMER',
-    AUTUMN = 'AUTUMN',
-    YEAR = 'YEAR'
+    FRUIT = 'FRUTA',
+    VEGETABLE = 'VEGETAL',
+    ORTALIZA = 'ORTALIZA',
+    OTHER = 'OTROS'
 }
 
 export enum Measurement {
@@ -23,6 +17,5 @@ export interface Product {
     name: string;
     stock: number;
     type?: ProductType;
-    season: Season;
     measurement: Measurement;
 }
