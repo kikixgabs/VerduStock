@@ -1,6 +1,6 @@
-<div
-    class="bg-gray-100 w-full h-full md:w-[90%] md:max-w-6xl md:h-auto md:max-h-[90vh] md:rounded-lg p-2 md:p-4 gap-4 flex flex-col shadow-lg overflow-hidden">
-    <div class="flex justify-between items-center">
+<div animateLoad="zoomIn"
+    class="bg-gray-100 w-full h-full md:w-[calc(80vw-4rem)] md:max-w-[calc(80vw-4rem)] md:h-auto md:max-h-[90vh] md:rounded-lg p-2 md:p-4 gap-4 flex flex-col shadow-lg overflow-hidden">
+    <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-bold">Historial de Ventas</h1>
         <button (click)="close()" class="p-2 bg-gray-200 rounded hover:bg-gray-300 transition-colors">
             <span class="md:hidden font-bold">✕</span>
@@ -22,7 +22,8 @@
                             ${{ group.totalAmount }}
                         </span>
                     </div>
-                    <span class="text-gray-500 transition-transform duration-200" [class.rotate-180]="item.expanded">
+                    <span class="text-gray-500 transition-transform duration-200 pl-3"
+                        [class.rotate-180]="item.expanded">
                         ▼
                     </span>
                 </div>
@@ -45,20 +46,38 @@
                             <tbody>
                                 @for (sell of group.sells; track sell.id) {
                                 <tr class="bg-gray-50 hover:bg-gray-100 transition-colors rounded-lg">
-                                    <td class="p-3">
+                                    <td class="p-3 align-top whitespace-nowrap">
                                         {{ sell.date | date:'HH:mm' }}
                                         @if(sell.history && sell.history.length > 0){<span
                                             class="text-orange-500 font-bold ml-1" title="Venta editada">*</span>}
                                     </td>
-                                    <td class="p-3">
+                                    <td class="p-3 align-top">
                                         <span
                                             class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full font-bold">
                                             {{ sell.type }}
                                         </span>
                                     </td>
-                                    <td class="p-3 font-bold text-green-600">${{ sell.amount }}</td>
-                                    <td class="p-3 text-sm text-gray-600">
+                                    <td class="p-3 font-bold text-green-600 align-top">${{ sell.amount }}</td>
+                                    <td class="p-3 text-sm text-gray-600 align-top">
                                         @if(sell.comments){ {{ sell.comments }} }@else{-}
+
+                                        @if(sell.history && sell.history.length > 0) {
+                                        <div
+                                            class="mt-2 pt-2 border-t border-gray-200 text-left text-xs bg-orange-50 p-2 rounded">
+                                            <span class="font-bold text-orange-700 block mb-1">Historial de
+                                                cambios:</span>
+                                            @for(change of sell.history; track $index) {
+                                            <div class="mb-1 last:mb-0">
+                                                <span class="text-gray-500">{{change.date | date:'HH:mm'}}:</span>
+                                                <span class="text-gray-700">{{ change.field }}</span>
+                                                <span class="text-red-500 line-through mx-1">{{ change.oldValue
+                                                    }}</span>
+                                                <span>→</span>
+                                                <span class="text-green-600 font-bold mx-1">{{ change.newValue }}</span>
+                                            </div>
+                                            }
+                                        </div>
+                                        }
                                     </td>
                                 </tr>
                                 }
@@ -70,7 +89,7 @@
                             @for (sell of group.sells; track sell.id) {
                             <div class="bg-gray-50 p-3 rounded border border-gray-100">
                                 <div class="flex justify-between items-center mb-1">
-                                    <span class="text-xs text-gray-500">
+                                    <span class="text-xs text-gray-500 whitespace-nowrap">
                                         {{ sell.date | date:'HH:mm' }}
                                         @if(sell.history && sell.history.length > 0){<span
                                             class="text-orange-500 font-bold ml-1" title="Venta editada">*</span>}
@@ -88,6 +107,22 @@
                                     </div>
                                     <span class="font-bold text-green-700 text-lg">${{ sell.amount }}</span>
                                 </div>
+
+                                @if(sell.history && sell.history.length > 0) {
+                                <div
+                                    class="mt-2 pt-2 border-t border-gray-200 text-left text-xs bg-orange-50 p-2 rounded">
+                                    <span class="font-bold text-orange-700 block mb-1">Historial de cambios:</span>
+                                    @for(change of sell.history; track $index) {
+                                    <div class="mb-1 last:mb-0">
+                                        <span class="text-gray-500">{{change.date | date:'HH:mm'}}:</span>
+                                        <span class="text-gray-700">{{ change.field }}</span>
+                                        <span class="text-red-500 line-through mx-1">{{ change.oldValue }}</span>
+                                        <span>→</span>
+                                        <span class="text-green-600 font-bold mx-1">{{ change.newValue }}</span>
+                                    </div>
+                                    }
+                                </div>
+                                }
                             </div>
                             }
                         </div>

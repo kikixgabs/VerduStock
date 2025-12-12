@@ -5,10 +5,11 @@ import { Sell } from '@app/private/models';
 import { LocalManagerService } from '@app/private/services/local-manager-service/local-manager-service';
 import { ToastService } from '@app/global/services/toast-service/toast-service';
 import { NewSellComponent } from '../new-sell-component/new-sell-component';
+import { AnimateLoadDirective } from 'ngx-gsap';
 
 @Component({
   selector: 'app-cash-closing-component',
-  imports: [DatePipe],
+  imports: [DatePipe, AnimateLoadDirective],
   templateUrl: './cash-closing-component.html',
   styleUrl: './cash-closing-component.css',
 })

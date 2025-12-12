@@ -56,7 +56,7 @@
             </div>
         </div>
     </div>
-    <div class="w-full overflow-x-auto">
+    <div class="w-full overflow-x-auto" [class.opacity-50]="isClosed()" [class.pointer-events-none]="isClosed()">
         @if(sells().length === 0){ <div class="flex justify-center items-center w-full min-h-[200px] text-gray-800">
             Sin ventas para mostrar hoy
         </div>}

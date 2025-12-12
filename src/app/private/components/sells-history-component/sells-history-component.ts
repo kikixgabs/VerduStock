@@ -4,10 +4,11 @@ import { ModalService } from '@app/global/services/modal-service/modal-service';
 import { Sell } from '@app/private/models';
 import { LocalManagerService } from '@app/private/services/local-manager-service/local-manager-service';
 import { CdkAccordionModule } from '@angular/cdk/accordion';
+import { AnimateLoadDirective } from 'ngx-gsap';
 
 @Component({
   selector: 'app-sells-history-component',
-  imports: [DatePipe, CdkAccordionModule],
+  imports: [DatePipe, CdkAccordionModule, AnimateLoadDirective],
   templateUrl: './sells-history-component.html',
   styleUrl: './sells-history-component.css',
 })
@@ -23,11 +24,20 @@ export class SellsHistoryComponent {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // Filter out today's sells
+    // Filter out today's sells UNLESS today is closed
+    const isTodayClosed = this.localManager.isTodayClosedSignal();
+
     const pastSells = sells.filter(sell => {
       const sellDate = new Date(sell.date);
       sellDate.setHours(0, 0, 0, 0);
-      return sellDate.getTime() !== today.getTime();
+
+      const isToday = sellDate.getTime() === today.getTime();
+
+      // Show if it's NOT today, OR if it IS today and the day is closed
+      if (!isToday) return true;
+      if (isToday && isTodayClosed) return true;
+
+      return false;
     });
 
     if (!pastSells.length) return [];

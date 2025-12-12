@@ -4,10 +4,11 @@ import { ModalService } from '@app/global/services/modal-service/modal-service';
 import { Sell, SellType } from '@app/private/models';
 import { SellsService } from '@app/private/services/sells-service/sells-service';
 import { DatePipe } from '@angular/common';
+import { AnimateLoadDirective } from 'ngx-gsap';
 
 @Component({
   selector: 'app-new-sell-component',
-  imports: [FormsModule, DatePipe],
+  imports: [FormsModule, DatePipe, AnimateLoadDirective],
   templateUrl: './new-sell-component.html',
   styleUrl: './new-sell-component.css',
 })
