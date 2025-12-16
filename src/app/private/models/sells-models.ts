@@ -19,5 +19,7 @@ export interface Sell {
     date: Date;
     type: SellType;
     comments: string | undefined;
+    modified?: boolean;
+    isClosed?: boolean;
     history?: SellHistory[];
 }

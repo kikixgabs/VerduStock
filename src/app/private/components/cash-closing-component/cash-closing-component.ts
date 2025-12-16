@@ -6,6 +6,8 @@ import { LocalManagerService } from '@app/private/services/local-manager-service
 import { ToastService } from '@app/global/services/toast-service/toast-service';
 import { NewSellComponent } from '../new-sell-component/new-sell-component';
 import { AnimateLoadDirective } from 'ngx-gsap';
+import { CashService } from '@app/private/services/cash-service/cash-service';
+
 
 @Component({
   selector: 'app-cash-closing-component',
@@ -16,7 +18,7 @@ import { AnimateLoadDirective } from 'ngx-gsap';
 export class CashClosingComponent {
 
   sells = signal<Sell[]>([]);
-  localManager = inject(LocalManagerService);
+  cashService = inject(CashService);
   toastService = inject(ToastService);
 
   totalAmount = computed(() => this.sells().reduce((acc, sell) => acc + sell.amount, 0));
@@ -29,27 +31,21 @@ export class CashClosingComponent {
   }
 
   editSell(sell: Sell) {
-    // We pass the sell to be edited. 
-    // Important: In this context, we probably want to refresh the list after edit.
-    // However, NewSellComponent updates the service signal. 
-    // Since CashClosingComponent uses a signal coming from MODAL_DATA (Snapshot) it wont update automatically unless we re-fetch.
-    // But let's check. 
-    // Actually, CashClosingComponent initializes `this.sells` signal from data.data. It is NOT connected to the service normally.
-    // We should probably subscribe to service sells or manually update.
     this.modalService.open(NewSellComponent, { sell });
   }
 
   cashClose() {
-    const ok = this.localManager.cashClose(this.sells());
-
-    if (!ok) {
-      this.toastService.showToast('Ya existe un cierre de caja para el día de hoy');
-      return;
-    }
-
-    this.modalService.close();
+    this.cashService.closeCashRegister().subscribe({
+      next: () => {
+        this.toastService.showToast('Caja cerrada con éxito');
+        this.modalService.close();
+        window.location.reload();
+      },
+      error: () => {
+        this.toastService.showToast('Error al cerrar la caja');
+      }
+    });
   }
-
 
   close() {
     this.modalService.close();

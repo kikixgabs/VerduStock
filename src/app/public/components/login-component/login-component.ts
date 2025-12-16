@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { AuthService } from '@app/global/services/auth-service/auth-service';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
@@ -25,13 +25,19 @@ export class LoginComponent {
     password: new FormControl('', { nonNullable: true, validators: [Validators.required] })
   });
 
+  loginError = signal<boolean>(false);
+
   async onSubmit() {
+    this.loginError.set(false);
     if (this.loginForm.invalid) return;
 
     try {
       await firstValueFrom(this.authService.login(this.loginForm.getRawValue()));
       this.router.navigate(['/stock-control']);
-    } catch (error) {
+    } catch (error: any) {
+      if (error.status === 401) {
+        this.loginError.set(true);
+      }
       console.log(error);
     }
   }

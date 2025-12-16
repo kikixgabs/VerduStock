@@ -6,7 +6,8 @@
         class="flex flex-col sm:flex-row flex-wrap justify-center items-center gap-4 mb-4 w-full sm:w-auto px-4 sm:px-0">
         <button
             class="bg-white px-4 py-3 sm:py-2 rounded shadow hover:bg-gray-50 w-full sm:w-auto text-center font-medium active:scale-95 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
-            [disabled]="isClosed()" (click)="openNewSellModal()">Añadir nueva
+            [class.opacity-50]="isClosed()" [class.grayscale]="isClosed()" [disabled]="isClosed()"
+            (click)="openNewSellModal()">Añadir nueva
             venta</button>
         <button
             class="bg-white px-4 py-3 sm:py-2 rounded shadow hover:bg-gray-50 w-full sm:w-auto text-center font-medium active:scale-95 transition-transform"
@@ -14,7 +15,8 @@
             ventas</button>
         <button
             class="bg-white px-4 py-3 sm:py-2 rounded shadow hover:bg-gray-50 w-full sm:w-auto text-center font-medium active:scale-95 transition-transform disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-500"
-            [disabled]="isClosed()" (click)="openCashClosingModal()">
+            [class.opacity-50]="isClosed()" [class.grayscale]="isClosed()" [disabled]="isClosed()"
+            (click)="openCashClosingModal()">
             {{ isClosed() ? 'Caja Cerrada' : 'Cerrar caja' }}
         </button>
     </div>
@@ -56,7 +58,7 @@
             </div>
         </div>
     </div>
-    <div class="w-full overflow-x-auto" [class.opacity-50]="isClosed()" [class.pointer-events-none]="isClosed()">
+    <div class="w-full overflow-x-auto">
         @if(sells().length === 0){ <div class="flex justify-center items-center w-full min-h-[200px] text-gray-800">
             Sin ventas para mostrar hoy
         </div>}
@@ -76,7 +78,8 @@
                 </thead>
                 <tbody>
                     @for (sell of sells(); track sell.id) {
-                    <tr class="bg-white shadow-sm rounded-lg hover:shadow-md transition-shadow">
+                    <tr class="bg-white shadow-sm rounded-lg hover:shadow-md transition-shadow"
+                        [class.opacity-50]="sell.isClosed" [class.grayscale]="sell.isClosed">
                         <td class="p-4 whitespace-nowrap">
                             {{ sell.date | date:'dd/MM' }}
                             @if(sell.history && sell.history.length > 0){<span class="text-orange-500 font-bold ml-1"
@@ -91,7 +94,7 @@
                         <td class="p-4">
                             <button
                                 class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                                [disabled]="isClosed()" (click)="editSell(sell)">
+                                [disabled]="sell.isClosed" (click)="editSell(sell)">
                                 Editar
                             </button>
                         </td>
@@ -104,7 +107,8 @@
         <!-- Mobile Cards -->
         <div class="md:hidden flex flex-col gap-3">
             @for (sell of sells(); track sell.id) {
-            <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+            <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-100" [class.opacity-50]="sell.isClosed"
+                [class.grayscale]="sell.isClosed">
                 <div class="flex justify-between items-start mb-2">
                     <div class="flex flex-col">
                         <span class="font-semibold text-gray-800 text-lg">${{ sell.amount }}</span>
@@ -131,7 +135,7 @@
                 <div class="mt-3 flex justify-end">
                     <button
                         class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                        [disabled]="isClosed()" (click)="editSell(sell)">
+                        [disabled]="sell.isClosed" (click)="editSell(sell)">
                         Editar
                     </button>
                 </div>

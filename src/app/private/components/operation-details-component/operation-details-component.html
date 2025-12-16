@@ -1,0 +1,65 @@
+<div class="bg-white w-full max-w-md mx-auto rounded-xl shadow-2xl overflow-hidden animate-fade-in-up">
+    <!-- Header -->
+    <div class="bg-gray-50 p-4 border-b flex justify-between items-center">
+        <div>
+            <h2 class="text-lg font-bold text-gray-800">Detalle de Operación</h2>
+            <p class="text-xs text-gray-500 font-mono">{{ receipt.operationNumber }}</p>
+        </div>
+        <button (click)="close()" class="text-gray-400 hover:text-gray-600 transition-colors p-1">
+            ✕
+        </button>
+    </div>
+
+    <!-- Body -->
+    <div class="p-6 flex flex-col gap-6">
+
+        <!-- Amount & Status -->
+        <div class="flex flex-col items-center justify-center gap-2">
+            <span class="text-3xl font-bold text-gray-800">{{ receipt.amount | currency }}</span>
+            <span class="px-3 py-1 rounded-full text-xs font-bold border {{ getStatusClass(receipt.status) }}">
+                {{ receipt.status }}
+            </span>
+        </div>
+
+        <!-- Details Grid -->
+        <div class="grid grid-cols-2 gap-4 text-sm">
+            <div class="flex flex-col">
+                <span class="text-gray-500 text-xs uppercase tracking-wider font-semibold mb-1">Fecha</span>
+                <span class="font-medium text-gray-800">{{ receipt.date | date:'medium' }}</span>
+            </div>
+            <div class="flex flex-col">
+                <span class="text-gray-500 text-xs uppercase tracking-wider font-semibold mb-1">ID Pago</span>
+                <span class="font-medium text-gray-800 font-mono text-xs">{{ receipt.payment_id }}</span>
+            </div>
+        </div>
+
+        <!-- Client Info -->
+        <div class="bg-gray-50 p-4 rounded-lg border border-gray-100">
+            <span class="text-gray-500 text-xs uppercase tracking-wider font-semibold mb-2 block">Datos del
+                Cliente</span>
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold">
+                    {{ receipt.personData.name.charAt(0).toUpperCase() }}
+                </div>
+                <div class="flex flex-col overflow-hidden">
+                    <span class="font-semibold text-gray-800 truncate">{{ receipt.personData.name }}</span>
+                    <span class="text-xs text-gray-500 truncate">{{ receipt.personData.email }}</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer Actions -->
+    <div class="p-4 border-t bg-gray-50 flex flex-col gap-2">
+        <button (click)="convertToPdf()"
+            class="w-full py-2.5 px-4 bg-white border border-gray-300 rounded-lg text-gray-700 font-semibold hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 shadow-sm">
+            <span>📄</span> Convertir a PDF
+        </button>
+        <button (click)="close()"
+            class="w-full py-2.5 px-4 bg-gray-800 text-white rounded-lg font-semibold hover:bg-gray-700 transition-colors shadow-sm">
+            Cerrar
+        </button>
+    </div>
+</div>

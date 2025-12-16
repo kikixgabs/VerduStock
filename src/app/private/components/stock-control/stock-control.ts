@@ -1,8 +1,8 @@
 import { Component, HostListener, ElementRef, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Product, ProductType, Measurement } from '../../models/index';
-import { LocalManagerService } from '@app/private/services/local-manager-service/local-manager-service';
 import { ModalService } from '@app/global/services/modal-service/modal-service';
+import { StockService } from '@app/private/services/stock-service/stock-service';
 import { EditComponent } from '../edit-component/edit-component/edit-component';
 import { SaveStockComponent } from '../save-stock-component/save-stock-component';
 import { AnimateClickDirective } from 'ngx-gsap'
@@ -16,71 +16,13 @@ import { AnimateClickDirective } from 'ngx-gsap'
 })
 export class StockControlComponent {
 
-  localManagerService = inject(LocalManagerService);
+  stockService = inject(StockService);
   modalService = inject(ModalService);
 
   // --------------------- PRODUCTOS ---------------------
-  products = signal<Product[]>([
-    // FRUTAS
-    { id: '1', name: 'Naranja', stock: 100, type: ProductType.FRUIT, measurement: Measurement.KILOS },
-    { id: '2', name: 'Mandarina', stock: 80, type: ProductType.FRUIT, measurement: Measurement.KILOS },
-    { id: '3', name: 'Pomelo', stock: 50, type: ProductType.FRUIT, measurement: Measurement.KILOS },
-    { id: '11', name: 'Frutilla', stock: 70, type: ProductType.FRUIT, measurement: Measurement.KILOS },
-    { id: '12', name: 'Cereza', stock: 60, type: ProductType.FRUIT, measurement: Measurement.KILOS },
-    { id: '13', name: 'Damasco', stock: 55, type: ProductType.FRUIT, measurement: Measurement.KILOS },
-    { id: '21', name: 'Sandía', stock: 40, type: ProductType.FRUIT, measurement: Measurement.UNIDADES },
-    { id: '22', name: 'Melón', stock: 45, type: ProductType.FRUIT, measurement: Measurement.UNIDADES },
-    { id: '23', name: 'Durazno', stock: 90, type: ProductType.FRUIT, measurement: Measurement.KILOS },
-    { id: '24', name: 'Ciruela', stock: 85, type: ProductType.FRUIT, measurement: Measurement.KILOS },
-    { id: '25', name: 'Higo', stock: 60, type: ProductType.FRUIT, measurement: Measurement.KILOS },
-    { id: '31', name: 'Manzana', stock: 120, type: ProductType.FRUIT, measurement: Measurement.KILOS },
-    { id: '32', name: 'Pera', stock: 100, type: ProductType.FRUIT, measurement: Measurement.KILOS },
-    { id: '33', name: 'Uva', stock: 90, type: ProductType.FRUIT, measurement: Measurement.KILOS },
-    { id: '34', name: 'Granada', stock: 40, type: ProductType.FRUIT, measurement: Measurement.KILOS },
-    { id: '35', name: 'Membrillo', stock: 30, type: ProductType.FRUIT, measurement: Measurement.KILOS },
-    { id: '40', name: 'Caqui', stock: 35, type: ProductType.FRUIT, measurement: Measurement.KILOS },
-    { id: '41', name: 'Banana', stock: 200, type: ProductType.FRUIT, measurement: Measurement.KILOS },
-    { id: '42', name: 'Limón', stock: 150, type: ProductType.FRUIT, measurement: Measurement.KILOS },
-    { id: '49', name: 'Palta', stock: 70, type: ProductType.FRUIT, measurement: Measurement.UNIDADES },
+  products = this.stockService.products;
 
-    // ORTALIZAS (Leafy greens, etc.)
-    { id: '4', name: 'Espinaca', stock: 30, type: ProductType.ORTALIZA, measurement: Measurement.UNIDADES },
-    { id: '9', name: 'Acelga', stock: 45, type: ProductType.ORTALIZA, measurement: Measurement.UNIDADES },
-    { id: '18', name: 'Rabanito', stock: 80, type: ProductType.ORTALIZA, measurement: Measurement.UNIDADES },
-    { id: '19', name: 'Berro', stock: 25, type: ProductType.ORTALIZA, measurement: Measurement.UNIDADES },
-    { id: '46', name: 'Lechuga', stock: 100, type: ProductType.ORTALIZA, measurement: Measurement.UNIDADES },
-    { id: '48', name: 'Perejil', stock: 60, type: ProductType.ORTALIZA, measurement: Measurement.UNIDADES },
-    { id: '6', name: 'Coliflor', stock: 35, type: ProductType.ORTALIZA, measurement: Measurement.UNIDADES }, // Could be debated, but putting here 
-    { id: '7', name: 'Repollo', stock: 25, type: ProductType.ORTALIZA, measurement: Measurement.UNIDADES },
-    { id: '5', name: 'Brócoli', stock: 40, type: ProductType.ORTALIZA, measurement: Measurement.KILOS },
-
-    // VEGETALES (Vegetables)
-    { id: '8', name: 'Col de Bruselas', stock: 20, type: ProductType.VEGETABLE, measurement: Measurement.KILOS },
-    { id: '10', name: 'Puerro', stock: 60, type: ProductType.VEGETABLE, measurement: Measurement.UNIDADES },
-    { id: '14', name: 'Espárrago', stock: 30, type: ProductType.VEGETABLE, measurement: Measurement.KILOS },
-    { id: '15', name: 'Alcaucil', stock: 40, type: ProductType.VEGETABLE, measurement: Measurement.UNIDADES },
-    { id: '16', name: 'Arvejas', stock: 50, type: ProductType.VEGETABLE, measurement: Measurement.KILOS },
-    { id: '17', name: 'Habas', stock: 45, type: ProductType.VEGETABLE, measurement: Measurement.KILOS },
-    { id: '20', name: 'Hinojo', stock: 35, type: ProductType.VEGETABLE, measurement: Measurement.KILOS },
-    { id: '26', name: 'Tomate', stock: 150, type: ProductType.VEGETABLE, measurement: Measurement.KILOS },
-    { id: '27', name: 'Pepino', stock: 70, type: ProductType.VEGETABLE, measurement: Measurement.UNIDADES },
-    { id: '28', name: 'Zucchini', stock: 65, type: ProductType.VEGETABLE, measurement: Measurement.KILOS },
-    { id: '29', name: 'Berenjena', stock: 60, type: ProductType.VEGETABLE, measurement: Measurement.KILOS },
-    { id: '30', name: 'Morrón', stock: 80, type: ProductType.VEGETABLE, measurement: Measurement.KILOS },
-    { id: '36', name: 'Calabaza', stock: 80, type: ProductType.VEGETABLE, measurement: Measurement.KILOS },
-    { id: '37', name: 'Batata', stock: 90, type: ProductType.VEGETABLE, measurement: Measurement.KILOS },
-    { id: '39', name: 'Choclo', stock: 100, type: ProductType.VEGETABLE, measurement: Measurement.UNIDADES },
-    { id: '43', name: 'Papa', stock: 300, type: ProductType.VEGETABLE, measurement: Measurement.KILOS },
-    { id: '44', name: 'Cebolla', stock: 250, type: ProductType.VEGETABLE, measurement: Measurement.KILOS },
-    { id: '45', name: 'Zanahoria', stock: 180, type: ProductType.VEGETABLE, measurement: Measurement.KILOS },
-    { id: '47', name: 'Ajo', stock: 120, type: ProductType.VEGETABLE, measurement: Measurement.UNIDADES },
-    { id: '50', name: 'Remolacha', stock: 80, type: ProductType.VEGETABLE, measurement: Measurement.KILOS },
-
-    // OTROS
-    { id: '38', name: 'Hongo', stock: 50, type: ProductType.OTHER, measurement: Measurement.KILOS },
-  ]);
-
-  stockFiltered = signal<Product[]>([]);
+  stockFiltered = computed(() => this.products().filter(p => p.loaded));
 
   // Categorías fijas
   categories = [
@@ -93,7 +35,7 @@ export class StockControlComponent {
   hoveredCategory = signal<ProductType | null>(null);
 
   ngOnInit(): void {
-    this.stockFiltered.set(this.localManagerService.loadStockList());
+    // Data is loaded in MainLayout
   }
 
   // --------------------- MENU STATE ---------------------
@@ -157,28 +99,38 @@ export class StockControlComponent {
 
   addAllCategoryProduct(type: ProductType) {
     const toAdd = this.products().filter(
-      p => p.type === type && !this.stockFiltered().some(s => s.id === p.id)
+      p => p.type === type && !p.loaded
     );
+
     if (!toAdd.length) return;
-    this.stockFiltered.update(prev => [...prev, ...toAdd]);
-    this.localManagerService.saveStockList(this.stockFiltered());
+
+    // Sync with backend (one by one as per current API)
+    toAdd.forEach(p => {
+      this.stockService.updateProduct({ ...p, loaded: true }).subscribe();
+    });
   }
 
   removeCategoryProduct(type: ProductType) {
-    // Remove all products of this type from the filtered list
-    this.stockFiltered.update(prev => prev.filter(p => p.type !== type));
-    this.localManagerService.saveStockList(this.stockFiltered());
+    const toRemove = this.products().filter(
+      p => p.type === type && p.loaded
+    );
+
+    if (!toRemove.length) return;
+
+    toRemove.forEach(p => {
+      this.stockService.updateProduct({ ...p, loaded: false }).subscribe();
+    });
   }
 
   addOneProduct(product: Product) {
-    if (this.stockFiltered().some(p => p.id === product.id)) return;
-    this.stockFiltered.update(prev => [...prev, { ...product }]);
-    this.localManagerService.saveStockList(this.stockFiltered());
+    if (product.loaded) return;
+    this.stockService.updateProduct({ ...product, loaded: true }).subscribe();
   }
 
   removeOneProduct(id: string) {
-    this.stockFiltered.update(prev => prev.filter(p => p.id !== id));
-    this.localManagerService.saveStockList(this.stockFiltered());
+    const product = this.products().find(p => p.id === id);
+    if (!product || !product.loaded) return;
+    this.stockService.updateProduct({ ...product, loaded: false }).subscribe();
   }
 
   editProduct(product: Product) {

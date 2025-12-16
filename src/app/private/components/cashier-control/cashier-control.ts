@@ -1,7 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { ModalService } from '@app/global/services/modal-service/modal-service';
 import { Sell } from '@app/private/models/index';
-import { LocalManagerService } from '@app/private/services/local-manager-service/local-manager-service';
 import { NewSellComponent } from '../new-sell-component/new-sell-component';
 import { SellsHistoryComponent } from '../sells-history-component/sells-history-component';
 import { DatePipe } from '@angular/common';
@@ -18,11 +17,11 @@ export class CashierControl {
 
   modalService = inject(ModalService);
   sellsService = inject(SellsService);
-  localManager = inject(LocalManagerService);
 
   sortOrder = signal<string>('date-desc');
   filterType = signal<string>('all');
-  isClosed = this.localManager.isTodayClosedSignal; // Use singleton signal
+  // Check if any of today's sells are closed. If so, the register is considered closed for today.
+  isClosed = computed(() => this.sells().some(sell => sell.isClosed));
 
   constructor() { }
 
@@ -62,7 +61,7 @@ export class CashierControl {
   }
 
   editSell(sell: Sell) {
-    if (this.isClosed()) return;
+    if (sell.isClosed) return;
     this.modalService.open(NewSellComponent, { sell });
   }
 

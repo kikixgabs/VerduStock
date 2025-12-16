@@ -2,7 +2,7 @@ import { Component, inject, Inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Measurement } from '@app/private/models/index';
 import { ModalService } from '@app/global/services/modal-service/modal-service';
-import { LocalManagerService } from '@app/private/services/local-manager-service/local-manager-service';
+import { StockService } from '@app/private/services/stock-service/stock-service';
 
 @Component({
   selector: 'app-edit-component',
@@ -13,7 +13,7 @@ import { LocalManagerService } from '@app/private/services/local-manager-service
 })
 export class EditComponent {
 
-  localManagerService = inject(LocalManagerService);
+  stockService = inject(StockService);
 
   constructor(
     @Inject('MODAL_DATA') public data: any,
@@ -23,7 +23,8 @@ export class EditComponent {
   measurements = Object.values(Measurement);
 
   close() {
-    this.localManagerService.updateProduct(this.data);
-    this.modalService.close();
+    this.stockService.updateProduct(this.data).subscribe(() => {
+      this.modalService.close();
+    });
   }
 }

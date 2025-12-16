@@ -18,4 +18,5 @@ export interface Product {
     stock: number;
     type?: ProductType;
     measurement: Measurement;
+    loaded?: boolean;
 }
