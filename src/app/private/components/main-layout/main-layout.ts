@@ -20,7 +20,6 @@ export class MainLayout {
     const authUrl = `https://auth.mercadopago.com.ar/authorization?client_id=${clientID}&response_type=code&platform_id=mp&redirect_uri=${redirectURI}`;
     window.location.href = authUrl;
     this.mercadoPagoConnected.set(true);
-    alert('Simulación: Mercado Pago conectado exitosamente');
   }
 
   constructor() {

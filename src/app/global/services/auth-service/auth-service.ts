@@ -21,7 +21,15 @@ export class AuthService {
     if (typeof localStorage !== 'undefined') {
       const user = localStorage.getItem('user');
       if (user) {
-        this.currentUser.set(JSON.parse(user));
+        try {
+          const parsedUser = JSON.parse(user);
+          if (parsedUser && typeof parsedUser === 'object') {
+            this.currentUser.set(parsedUser);
+          }
+        } catch (error) {
+          console.error('Error parsing user from local storage', error);
+          localStorage.removeItem('user');
+        }
       }
     }
   }

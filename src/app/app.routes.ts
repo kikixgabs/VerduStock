@@ -14,6 +14,7 @@ export const routes: Routes = [
         path: '',
         component: MainLayout,
         canActivate: [authGuard],
+        canActivateChild: [authGuard],
         children: [
             { path: 'stock-control', component: StockControlComponent },
             { path: 'cashier-control', component: CashierControl },
