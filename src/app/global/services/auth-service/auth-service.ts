@@ -77,8 +77,8 @@ export class AuthService {
   // Helper privado para no repetir código
   private updateUser(user: UserModel) {
     this.currentUser.set(user);
-    if (typeof localStorage !== 'undefined') {
-      localStorage.setItem('user', JSON.stringify(user));
-    }
+    // if (typeof localStorage !== 'undefined') {
+    //   localStorage.setItem('user', JSON.stringify(user));
+    // }
   }
 }
