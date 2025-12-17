@@ -5,6 +5,7 @@ import { ReceiptsComponent } from './private/components/receipts-component/recei
 import { PublicLayout } from './public/components/public-layout/public-layout';
 import { MainLayout } from './private/components/main-layout/main-layout';
 import { authGuard } from './global/guards/auth.guard';
+import { MpCallback } from './private/pages/mp-callback/mp-callback';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -16,7 +17,8 @@ export const routes: Routes = [
         children: [
             { path: 'stock-control', component: StockControlComponent },
             { path: 'cashier-control', component: CashierControl },
-            { path: 'receipts', component: ReceiptsComponent }
+            { path: 'receipts', component: ReceiptsComponent },
+            { path: 'callback', component: MpCallback }
         ]
     }
 ];

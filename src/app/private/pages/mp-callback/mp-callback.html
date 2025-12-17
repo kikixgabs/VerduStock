@@ -1,0 +1,40 @@
+<div class="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+    <div class="bg-white p-8 rounded-xl shadow-lg max-w-md w-full text-center">
+        @if(status === 'loading') {
+        <div class="flex flex-col items-center">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+            <h2 class="text-xl font-bold text-gray-800">Vinculando cuenta...</h2>
+            <p class="text-gray-500 mt-2">Estamos conectando tu Mercado Pago con VerduStock.</p>
+        </div>
+        }
+
+        @if(status === 'success') {
+        <div class="flex flex-col items-center">
+            <div
+                class="h-16 w-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-3xl mb-4">
+                ✓
+            </div>
+            <h2 class="text-xl font-bold text-gray-800">¡Vinculación Exitosa!</h2>
+            <p class="text-gray-500 mt-2">Ahora tus ventas se registrarán automáticamente.</p>
+            <button (click)="goHome()"
+                class="mt-6 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors w-full">
+                Volver al Panel
+            </button>
+        </div>
+        }
+
+        @if(status === 'error') {
+        <div class="flex flex-col items-center">
+            <div class="h-16 w-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center text-3xl mb-4">
+                ✕
+            </div>
+            <h2 class="text-xl font-bold text-gray-800">Hubo un problema</h2>
+            <p class="text-red-500 mt-2 text-sm">{{ errorMessage }}</p>
+            <button (click)="goHome()"
+                class="mt-6 bg-gray-800 text-white px-6 py-2 rounded-lg hover:bg-gray-900 transition-colors w-full">
+                Volver e intentar de nuevo
+            </button>
+        </div>
+        }
+    </div>
+</div>
