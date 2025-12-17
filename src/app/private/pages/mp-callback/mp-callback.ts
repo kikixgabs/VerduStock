@@ -63,7 +63,6 @@ export class MpCallback implements OnInit {
   }
 
   goHome() {
-    // Redirigimos a la raíz del panel privado para que cargue el MainLayout de nuevo
-    this.router.navigate(['/']);
+    this.router.navigate(['/stock-control']);
   }
 }
