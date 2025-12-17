@@ -1,12 +1,12 @@
 <div class="min-h-screen bg-green-200 flex flex-col font-sans">
-    <h1 class="text-6xl text-center mt-4 font-bold text-gray-800 relative">
+    <h1 class="text-4xl md:text-6xl text-center mt-14 md:mt-4 font-bold text-gray-800 relative">
         VerduStock
-        <div class="absolute top-0 right-0 md:right-8 flex items-center h-full">
+        <div class="absolute -top-10 right-4 md:top-0 md:right-8 flex items-center md:h-full">
             <button (click)="connectMercadoPago()" [disabled]="mercadoPagoConnected()"
                 [class.bg-blue-500]="!mercadoPagoConnected()" [class.hover:bg-blue-600]="!mercadoPagoConnected()"
                 [class.text-white]="!mercadoPagoConnected()" [class.bg-gray-200]="mercadoPagoConnected()"
                 [class.text-gray-500]="mercadoPagoConnected()"
-                class="hidden md:flex text-sm px-4 py-2 rounded-lg font-bold shadow transition-colors items-center gap-2">
+                class="flex text-xs md:text-sm px-3 py-1.5 md:px-4 md:py-2 rounded-lg font-bold shadow transition-colors items-center gap-2">
                 @if(mercadoPagoConnected()) {
                 <span>✅</span> Mercado Pago Conectado
                 } @else {
