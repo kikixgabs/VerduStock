@@ -27,7 +27,19 @@ export class ReceiptsComponent implements OnInit {
     this.isLoading.set(true);
     this.receiptsService.getReceipts().subscribe({
       next: (data) => {
-        this.receipts.set(data);
+        // 📅 FILTRO VISUAL: SOLO HOY (Desde las 00:00)
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Resetear a la medianoche de hoy
+
+        const todaysReceipts = data.filter(receipt => {
+          const receiptDate = new Date(receipt.date);
+          return receiptDate >= today;
+        });
+
+        // Ordenar: Más recientes primero
+        todaysReceipts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+        this.receipts.set(todaysReceipts);
         this.isLoading.set(false);
       },
       error: (err) => {

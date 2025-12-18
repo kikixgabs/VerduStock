@@ -1,5 +1,5 @@
 // receipts.service.ts
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@env/environment';
 import { map } from 'rxjs/operators';
@@ -11,6 +11,8 @@ import { Receipt, Status } from '../../models/receipts-model';
 export class ReceiptsService {
   private http = inject(HttpClient);
   private apiUrl = environment.apiUrl;
+  recepeitService = inject(ReceiptsService);
+  isLoading = signal(true);
 
   syncTransfers() {
     return this.http.post<{ message: string, new: number }>(
@@ -18,6 +20,32 @@ export class ReceiptsService {
       {},
       { withCredentials: true }
     );
+  }
+
+  loadReceipts() {
+    this.isLoading.set(true);
+    this.receiptsService.getReceipts().subscribe({
+      next: (data) => {
+        // 📅 FILTRO VISUAL: SOLO HOY (Desde las 00:00)
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Resetear a la medianoche de hoy
+
+        const todaysReceipts = data.filter(receipt => {
+          const receiptDate = new Date(receipt.date);
+          return receiptDate >= today;
+        });
+
+        // Ordenar: Más recientes primero
+        todaysReceipts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+        this.receipts.set(todaysReceipts);
+        this.isLoading.set(false);
+      },
+      error: (err) => {
+        console.error('Error cargando recibos', err);
+        this.isLoading.set(false);
+      }
+    });
   }
 
   getReceipts() {
@@ -54,4 +82,6 @@ export class ReceiptsService {
       })
     );
   }
+
+
 }
