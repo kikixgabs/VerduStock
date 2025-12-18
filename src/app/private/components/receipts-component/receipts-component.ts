@@ -73,10 +73,8 @@ export class ReceiptsComponent implements OnInit {
     this.isSyncing.set(true);
     this.receiptsService.syncTransfers().subscribe({
       next: (res) => {
-        // Si encontró nuevas, recargamos la tabla
-        if (res.new > 0) {
-          this.loadReceipts();
-        }
+        this.loadReceipts();
+
         this.isSyncing.set(false);
       },
       error: (err) => {
