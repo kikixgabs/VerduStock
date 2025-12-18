@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Redirigiendo...</title>
+    <script>
+        // 1. Obtener los parámetros que manda Mercado Pago (?code=...)
+        const query = window.location.search;
+
+        // 2. Construir la URL estilo Angular con Hash (#)
+        // De: .../VerduStock/callback.html?code=123
+        // A:  .../VerduStock/#/callback?code=123
+        // Asegúrate de que '/VerduStock/' coincida con tu base href
+        const targetUrl = window.location.origin + '/VerduStock/#/callback' + query;
+
+        // 3. Redirigir inmediatamente
+        window.location.replace(targetUrl);
+    </script>
+</head>
+
+<body>
+    <p>Procesando vinculación con Mercado Pago...</p>
+</body>
+
+</html>

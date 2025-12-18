@@ -1,5 +1,5 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withHashLocation } from '@angular/router';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from './global/interceptors/auth.interceptor';
 import { loadingInterceptor } from './global/interceptors/loading.interceptor';
@@ -12,7 +12,7 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
     provideHttpClient(withFetch(), withInterceptors([authInterceptor, loadingInterceptor])),
-    provideRouter(routes),
+    provideRouter(routes, withHashLocation()),
     provideClientHydration(withEventReplay()),
   ]
 };

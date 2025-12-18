@@ -31,9 +31,10 @@ export class MainLayout implements OnInit {
 
   connectMercadoPago() {
     const clientID = '8365811410735376';
-    const redirectURI = 'https://kikixgabs.github.io/VerduStock/callback';
-    const authUrl = `https://auth.mercadopago.com.ar/authorization?client_id=${clientID}&response_type=code&platform_id=mp&redirect_uri=${redirectURI}`;
+    // ✅ Apuntamos al archivo HTML puente
+    const redirectURI = 'https://kikixgabs.github.io/VerduStock/callback.html';
 
+    const authUrl = `https://auth.mercadopago.com.ar/authorization?client_id=${clientID}&response_type=code&platform_id=mp&redirect_uri=${redirectURI}`;
     window.location.href = authUrl;
   }
 }
