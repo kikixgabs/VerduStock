@@ -9,7 +9,10 @@ import { MpCallback } from './private/pages/mp-callback/mp-callback';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
+
     { path: 'login', component: PublicLayout },
+    { path: 'callback', component: MpCallback },
+
     {
         path: '',
         component: MainLayout,
@@ -19,7 +22,6 @@ export const routes: Routes = [
             { path: 'stock-control', component: StockControlComponent },
             { path: 'cashier-control', component: CashierControl },
             { path: 'receipts', component: ReceiptsComponent },
-            { path: 'callback', component: MpCallback }
         ]
     }
 ];
