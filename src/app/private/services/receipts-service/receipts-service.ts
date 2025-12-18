@@ -10,6 +10,15 @@ export class ReceiptsService {
   private http = inject(HttpClient);
   private apiUrl = environment.apiUrl;
 
+  // receipts.service.ts
+  syncTransfers() {
+    return this.http.post<{ message: string, new: number }>(
+      `${this.apiUrl}/payments/sync`,
+      {},
+      { withCredentials: true }
+    );
+  }
+
   getReceipts() {
     return this.http.get<any[]>(`${this.apiUrl}/payments`, { withCredentials: true }).pipe(
       map(payments => {

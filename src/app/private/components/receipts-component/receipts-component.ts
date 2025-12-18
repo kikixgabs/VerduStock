@@ -53,4 +53,24 @@ export class ReceiptsComponent implements OnInit {
   }
 
   // ... (resto de funciones)
+
+  // Agrega signal para el loading del sync
+  isSyncing = signal(false);
+
+  syncNow() {
+    this.isSyncing.set(true);
+    this.receiptsService.syncTransfers().subscribe({
+      next: (res) => {
+        // Si encontró nuevas, recargamos la tabla
+        if (res.new > 0) {
+          this.loadReceipts();
+        }
+        this.isSyncing.set(false);
+      },
+      error: (err) => {
+        console.error(err);
+        this.isSyncing.set(false);
+      }
+    });
+  }
 }
