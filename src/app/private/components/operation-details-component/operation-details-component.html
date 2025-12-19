@@ -1,5 +1,4 @@
 <div class="bg-white w-full max-w-md mx-auto rounded-xl shadow-2xl overflow-hidden animate-fade-in-up">
-    <!-- Header -->
     <div class="bg-gray-50 p-4 border-b flex justify-between items-center">
         <div>
             <h2 class="text-lg font-bold text-gray-800">Detalle de Operación</h2>
@@ -10,10 +9,7 @@
         </button>
     </div>
 
-    <!-- Body -->
     <div class="p-6 flex flex-col gap-6">
-
-        <!-- Amount & Status -->
         <div class="flex flex-col items-center justify-center gap-2">
             <span class="text-3xl font-bold text-gray-800">{{ receipt.amount | currency }}</span>
             <span class="px-3 py-1 rounded-full text-xs font-bold border {{ getStatusClass(receipt.status) }}">
@@ -21,7 +17,6 @@
             </span>
         </div>
 
-        <!-- Details Grid -->
         <div class="grid grid-cols-2 gap-4 text-sm">
             <div class="flex flex-col">
                 <span class="text-gray-500 text-xs uppercase tracking-wider font-semibold mb-1">Fecha</span>
@@ -33,7 +28,6 @@
             </div>
         </div>
 
-        <!-- Client Info -->
         <div class="bg-gray-50 p-4 rounded-lg border border-gray-100">
             <span class="text-gray-500 text-xs uppercase tracking-wider font-semibold mb-2 block">Datos del
                 Cliente</span>
@@ -48,18 +42,84 @@
                 </div>
             </div>
         </div>
-
     </div>
 
-    <!-- Footer Actions -->
     <div class="p-4 border-t bg-gray-50 flex flex-col gap-2">
-        <button (click)="convertToPdf()"
-            class="w-full py-2.5 px-4 bg-white border border-gray-300 rounded-lg text-gray-700 font-semibold hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 shadow-sm">
-            <span>📄</span> Convertir a PDF
+        <button (click)="convertToPdf()" [disabled]="isGeneratingPdf"
+            class="w-full py-2.5 px-4 bg-white border border-gray-300 rounded-lg text-gray-700 font-semibold hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 shadow-sm disabled:opacity-50 disabled:cursor-wait">
+            <span *ngIf="!isGeneratingPdf">📄</span>
+            <span *ngIf="isGeneratingPdf" class="animate-spin">↻</span>
+            {{ isGeneratingPdf ? 'Generando...' : 'Convertir a PDF' }}
         </button>
         <button (click)="close()"
             class="w-full py-2.5 px-4 bg-gray-800 text-white rounded-lg font-semibold hover:bg-gray-700 transition-colors shadow-sm">
             Cerrar
         </button>
+    </div>
+</div>
+
+<div id="mp-pdf-template" class="bg-white w-[500px] p-10 text-gray-800 font-sans absolute -left-[9999px] top-0">
+
+    <div class="flex justify-center mb-8">
+        <span class="text-blue-500 font-normal text-sm">MercadoPago</span>
+    </div>
+
+    <div class="text-center mb-12">
+        <div class="text-sm mb-1 flex items-center justify-center gap-1">
+            <span class="text-blue-500">Número de operación {{ receipt.payment_id }}</span>
+            <span class="text-blue-500 text-xs">❐</span>
+        </div>
+        <div class="text-gray-400 text-xs">
+            Creada el {{ receipt.date | date:"d 'de' MMMM" }} - {{ receipt.date | date:'HH:mm' }} hs
+        </div>
+    </div>
+
+    <div class="border-t border-gray-100 py-8">
+        <div class="flex justify-between items-start mb-2">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center bg-white">
+                    <span class="text-gray-700 font-bold text-lg">$</span>
+                </div>
+                <span class="font-normal text-xl text-gray-900">Ingresaste dinero</span>
+            </div>
+            <span class="font-bold text-xl">{{ receipt.amount | currency }}</span>
+        </div>
+
+        <div class="pl-[56px]">
+            <span class="text-green-600 font-medium text-sm">Aprobada</span>
+        </div>
+    </div>
+
+    <div class="border-t border-gray-100 py-8">
+        <h3 class="text-gray-900 text-sm font-normal mb-6">De</h3>
+
+        <div class="flex gap-4">
+            <div class="flex-shrink-0">
+                <div
+                    class="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center bg-white overflow-hidden">
+                    <span class="text-gray-500 font-bold">{{ receipt.personData.name.charAt(0).toUpperCase() }}</span>
+                </div>
+            </div>
+
+            <div class="flex flex-col text-sm leading-relaxed">
+                <span class="font-medium text-gray-900">{{ receipt.personData.name }}</span>
+
+                <span class="text-gray-400 text-xs">
+                    {{ receipt.personData.email || 'CVU no disponible' }}
+                </span>
+
+                <span class="text-gray-400 text-xs">Cuenta Mercado Pago / Banco</span>
+
+                <div class="mt-1">
+                    <span class="text-gray-400 text-xs">Código de identificación:</span>
+                    <br>
+                    <span class="text-blue-500 text-xs">{{ receipt.operationNumber }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-12 flex justify-center">
+        <span class="text-gray-200 text-[10px]">VerduStock System</span>
     </div>
 </div>
