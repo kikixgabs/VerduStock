@@ -1,17 +1,26 @@
 <div class="w-full flex flex-col gap-6 p-2 md:p-4 mx-auto">
-    <div class="flex flex-col justify-center items-center">
-        <h1 class="text-2xl font-bold text-gray-800">Recibos de Transferencias</h1>
-        <p class="text-gray-600">Listado de nuevos recibos ingresados al sistema</p>
-    </div>
 
     <div class="flex flex-col justify-center items-center relative">
         <h1 class="text-2xl font-bold text-gray-800">Recibos de Transferencias</h1>
 
-        <button (click)="syncNow()" [disabled]="isSyncing()"
-            class="mt-2 flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+        <button (click)="syncNow()" [disabled]="isSyncing() || !isMpConnected()" [class.bg-blue-600]="isMpConnected()"
+            [class.hover:bg-blue-700]="isMpConnected()" [class.bg-gray-400]="!isMpConnected()"
+            class="mt-2 flex items-center gap-2 px-4 py-2 text-white rounded-lg text-sm font-bold transition-all disabled:opacity-70 disabled:cursor-not-allowed">
+
+            @if (isMpConnected()) {
             <span [class.animate-spin]="isSyncing()">↻</span>
+            }
+
+            @if (!isMpConnected()) {
+            <span>⚠️ Cuenta no vinculada</span>
+            } @else {
             {{ isSyncing() ? 'Buscando...' : 'Sincronizar Transferencias' }}
+            }
         </button>
+
+        @if (!isMpConnected()) {
+        <p class="text-xs text-gray-500 mt-1">Vincula Mercado Pago arriba a la derecha para usar esta función.</p>
+        }
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
@@ -19,7 +28,6 @@
         <div
             class="bg-gray-50 p-4 rounded-lg border border-gray-100 shadow-sm hover:shadow-md transition-shadow flex flex-col gap-3">
 
-            <!-- Header Row: Date & Status -->
             <div class="flex justify-between items-center">
                 <span class="text-xs text-gray-500 font-medium whitespace-nowrap">
                     {{ receipt.date | date:'mediumDate' }} • {{ receipt.date | date:'shortTime' }}
@@ -29,7 +37,6 @@
                 </span>
             </div>
 
-            <!-- Content Row: Client & Amount -->
             <div class="flex justify-between items-end">
                 <div class="flex flex-col gap-1 overflow-hidden pr-4">
                     <span class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Cliente</span>
@@ -47,7 +54,6 @@
                 </div>
             </div>
 
-            <!-- Action Row -->
             <div class="flex justify-end pt-2 border-t border-gray-200/50">
                 <button (click)="openDetails(receipt)"
                     class="text-xs font-semibold text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1 transition-colors">

@@ -1,9 +1,10 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Receipt, Status } from '../../models/receipts-model';
 import { ModalService } from '../../../global/services/modal-service/modal-service';
 import { OperationDetailsComponent } from '../operation-details-component/operation-details-component';
-import { ReceiptsService } from '@app/private/services/receipts-service/receipts-service'; // ✅ Importar servicio
+import { ReceiptsService } from '@app/private/services/receipts-service/receipts-service';
+import { AuthService } from '@app/global/services/auth-service/auth-service'; // ✅ Importamos Auth
 
 @Component({
   selector: 'app-receipts-component',
@@ -14,10 +15,17 @@ import { ReceiptsService } from '@app/private/services/receipts-service/receipts
 })
 export class ReceiptsComponent implements OnInit {
   private modalService = inject(ModalService);
-  private receiptsService = inject(ReceiptsService); // ✅ Inyectar servicio
+  private receiptsService = inject(ReceiptsService);
+  private authService = inject(AuthService); // ✅ Inyectamos Auth
 
   receipts = signal<Receipt[]>([]);
-  isLoading = signal(true); // Opcional: para mostrar spinner
+  isLoading = signal(true);
+  isSyncing = signal(false);
+
+  // ✅ Nueva señal computada: ¿Está conectado Mercado Pago?
+  isMpConnected = computed(() => {
+    return !!this.authService.currentUser()?.mpAccountConnected;
+  });
 
   ngOnInit() {
     this.loadReceipts();
@@ -27,16 +35,14 @@ export class ReceiptsComponent implements OnInit {
     this.isLoading.set(true);
     this.receiptsService.getReceipts().subscribe({
       next: (data) => {
-        // 📅 FILTRO VISUAL: SOLO HOY (Desde las 00:00)
         const today = new Date();
-        today.setHours(0, 0, 0, 0); // Resetear a la medianoche de hoy
+        today.setHours(0, 0, 0, 0);
 
         const todaysReceipts = data.filter(receipt => {
           const receiptDate = new Date(receipt.date);
           return receiptDate >= today;
         });
 
-        // Ordenar: Más recientes primero
         todaysReceipts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
         this.receipts.set(todaysReceipts);
@@ -49,13 +55,11 @@ export class ReceiptsComponent implements OnInit {
     });
   }
 
-  // ... (Tus funciones openDetails, getStatusClass, getStatusIcon siguen igual) ...
   openDetails(receipt: Receipt) {
     this.modalService.open(OperationDetailsComponent, receipt);
   }
 
   getStatusClass(status: Status): string {
-    // ... tu código existente ...
     switch (status) {
       case Status.PENDING: return 'bg-yellow-100 text-yellow-800 border-yellow-200';
       case Status.COMPLETED: return 'bg-green-100 text-green-800 border-green-200';
@@ -64,17 +68,13 @@ export class ReceiptsComponent implements OnInit {
     }
   }
 
-  // ... (resto de funciones)
-
-  // Agrega signal para el loading del sync
-  isSyncing = signal(false);
-
   syncNow() {
+    if (!this.isMpConnected()) return; // Protección extra
+
     this.isSyncing.set(true);
     this.receiptsService.syncTransfers().subscribe({
       next: (res) => {
         this.loadReceipts();
-
         this.isSyncing.set(false);
       },
       error: (err) => {
