@@ -1,6 +1,5 @@
-// main-layout.ts (Versión limpia)
-import { Component, computed, inject } from '@angular/core';
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, computed, inject, OnInit } from '@angular/core';
+import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router'; // ✅ Importamos Router
 import { StockService } from '@app/private/services/stock-service/stock-service';
 import { AuthService } from '@app/global/services/auth-service/auth-service';
 
@@ -10,12 +9,11 @@ import { AuthService } from '@app/global/services/auth-service/auth-service';
   templateUrl: './main-layout.html',
   styleUrl: './main-layout.css',
 })
-export class MainLayout {
+export class MainLayout implements OnInit {
   private stockService = inject(StockService);
   private authService = inject(AuthService);
+  private router = inject(Router); // ✅ Inyectamos el Router
 
-  // Este computed es reactivo: Si authService.currentUser cambia (login/logout/checkStatus),
-  // esto se actualiza solo.
   mercadoPagoConnected = computed(() => {
     const user = this.authService.currentUser();
     return !!user?.mpAccountConnected;
@@ -23,14 +21,18 @@ export class MainLayout {
 
   ngOnInit() {
     this.stockService.loadProducts();
-    // No hace falta llamar a getProfile() aquí, el APP_INITIALIZER ya lo hizo al arrancar la app.
   }
 
   connectMercadoPago() {
     const clientID = '8365811410735376';
-    // Asegúrate de que esta URL sea correcta para tu entorno (dev vs prod)
     const redirectURI = 'https://kikixgabs.github.io/VerduStock/callback.html';
     const authUrl = `https://auth.mercadopago.com.ar/authorization?client_id=${clientID}&response_type=code&platform_id=mp&redirect_uri=${redirectURI}`;
     window.location.href = authUrl;
+  }
+
+  // ✅ Nueva función de Logout
+  logout() {
+    this.authService.logout(); // Limpia la sesión
+    this.router.navigate(['/login']); // Redirige al login
   }
 }

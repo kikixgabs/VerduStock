@@ -1,16 +1,30 @@
 <div class="min-h-screen bg-green-200 flex flex-col font-sans">
+
     <h1 class="text-4xl md:text-6xl text-center mt-14 md:mt-4 font-bold text-gray-800 relative">
         VerduStock
-        <div class="absolute -top-10 right-4 md:top-0 md:right-8 flex items-center md:h-full">
+
+        <div class="absolute -top-10 right-4 md:top-0 md:right-8 flex items-center gap-2 md:h-full">
+
+            <button (click)="logout()" title="Cerrar Sesión"
+                class="flex items-center justify-center bg-white text-red-500 hover:bg-red-500 hover:text-white border border-red-200 p-2 rounded-lg shadow transition-all duration-200 group">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                <span class="hidden md:block ml-2 text-sm font-bold">Salir</span>
+            </button>
+
             <button (click)="connectMercadoPago()" [disabled]="mercadoPagoConnected()"
                 [class.bg-blue-500]="!mercadoPagoConnected()" [class.hover:bg-blue-600]="!mercadoPagoConnected()"
                 [class.text-white]="!mercadoPagoConnected()" [class.bg-gray-200]="mercadoPagoConnected()"
                 [class.text-gray-500]="mercadoPagoConnected()"
                 class="flex text-xs md:text-sm px-3 py-1.5 md:px-4 md:py-2 rounded-lg font-bold shadow transition-colors items-center gap-2">
                 @if(mercadoPagoConnected()) {
-                <span>✅</span> Mercado Pago Conectado
+                <span>✅</span> <span class="hidden sm:inline">MP Conectado</span>
                 } @else {
-                <span>🔗</span> Conectar Mercado Pago
+                <span>🔗</span> <span class="hidden sm:inline">Conectar MP</span>
                 }
             </button>
         </div>
@@ -18,22 +32,18 @@
 
     <nav
         class="sticky top-4 z-50 mx-auto w-[95%] max-w-2xl mt-4 bg-white/90 backdrop-blur-xl border border-white/20 shadow-lg rounded-2xl p-1.5 flex justify-center gap-1">
-
         <a routerLink="stock-control" routerLinkActive="bg-green-50 text-green-700 shadow-sm ring-1 ring-green-200"
             class="flex-1 flex items-center justify-center text-center px-2 py-3 rounded-xl text-sm font-bold text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition-all duration-300 outline-none select-none">
             Control de Stock
         </a>
-
         <a routerLink="cashier-control" routerLinkActive="bg-blue-50 text-blue-700 shadow-sm ring-1 ring-blue-200"
             class="flex-1 flex items-center justify-center text-center px-2 py-3 rounded-xl text-sm font-bold text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition-all duration-300 outline-none select-none">
             Caja
         </a>
-
         <a routerLink="receipts" routerLinkActive="bg-purple-50 text-purple-700 shadow-sm ring-1 ring-purple-200"
             class="flex-1 flex items-center justify-center text-center px-2 py-3 rounded-xl text-sm font-bold text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition-all duration-300 outline-none select-none">
             Recibos
         </a>
-
     </nav>
 
     <main class="flex-1 p-4 md:p-6 lg:p-8 max-w-7xl mx-auto w-full animate-fade-in">
