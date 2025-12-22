@@ -15,21 +15,27 @@
             </button>
         </div>
     </h1>
+
     <nav
         class="sticky top-4 z-50 mx-auto w-[95%] max-w-2xl mt-4 bg-white/90 backdrop-blur-xl border border-white/20 shadow-lg rounded-2xl p-1.5 flex justify-center gap-1">
+
         <a routerLink="stock-control" routerLinkActive="bg-green-50 text-green-700 shadow-sm ring-1 ring-green-200"
-            class="flex-1 text-center px-6 py-3 rounded-xl text-sm font-bold text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition-all duration-300 outline-none select-none">
+            class="flex-1 flex items-center justify-center text-center px-2 py-3 rounded-xl text-sm font-bold text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition-all duration-300 outline-none select-none">
             Control de Stock
         </a>
+
         <a routerLink="cashier-control" routerLinkActive="bg-blue-50 text-blue-700 shadow-sm ring-1 ring-blue-200"
-            class="flex-1 text-center px-6 py-3 rounded-xl text-sm font-bold text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition-all duration-300 outline-none select-none">
+            class="flex-1 flex items-center justify-center text-center px-2 py-3 rounded-xl text-sm font-bold text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition-all duration-300 outline-none select-none">
             Caja
         </a>
+
         <a routerLink="receipts" routerLinkActive="bg-purple-50 text-purple-700 shadow-sm ring-1 ring-purple-200"
-            class="flex-1 text-center px-6 py-3 rounded-xl text-sm font-bold text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition-all duration-300 outline-none select-none">
+            class="flex-1 flex items-center justify-center text-center px-2 py-3 rounded-xl text-sm font-bold text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition-all duration-300 outline-none select-none">
             Recibos
         </a>
+
     </nav>
+
     <main class="flex-1 p-4 md:p-6 lg:p-8 max-w-7xl mx-auto w-full animate-fade-in">
         <router-outlet></router-outlet>
     </main>

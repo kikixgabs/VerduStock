@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { environment } from '@env/environment';
-import { tap } from 'rxjs';
-import { UserModel } from '@app/private/models/index'; // Asegúrate de importar tu interfaz
+import { tap, catchError, of, map, Observable } from 'rxjs'; // Importamos operadores RxJS necesarios
+import { UserModel } from '@app/private/models/index';
 
 interface LoginCredentials {
   email: string;
@@ -16,69 +16,81 @@ export class AuthService {
   private apiUrl = environment.apiUrl;
   http = inject(HttpClient);
 
-  // Usamos tu interfaz UserModel para tener autocompletado
+  // Signal principal del usuario
   currentUser = signal<UserModel | null>(null);
 
+  // Signal para saber si estamos verificando sesión (útil para spinners de carga inicial)
+  isCheckingAuth = signal<boolean>(true);
+
   constructor() {
-    if (typeof localStorage !== 'undefined') {
-      const user = localStorage.getItem('user');
-      if (user) {
-        try {
-          const parsedUser = JSON.parse(user);
-          if (parsedUser && typeof parsedUser === 'object') {
-            this.currentUser.set(parsedUser);
-          }
-        } catch (error) {
-          console.error('Error parsing user from local storage', error);
-          localStorage.removeItem('user');
-        }
-      }
-    }
+    // Ya no dependemos de localStorage para la persistencia crítica,
+    // pero podemos mantenerlo como respaldo visual rápido si quieres.
+    // La verdad verdadera vendrá de checkAuthStatus()
   }
 
   isLoggedIn() {
     return !!this.currentUser();
   }
 
-  // ✅ NUEVO: Método para refrescar los datos del usuario desde el backend
-  // Se llama al iniciar la app y cuando vuelves de Mercado Pago
-  getProfile() {
-    // Asumiendo que tu backend responde esto en /auth/me
-    return this.http.get<{ user: UserModel }>(`${this.apiUrl}/auth/me`).pipe(
-      tap((response: any) => {
-        // A veces el backend devuelve { user: ... } o directo el objeto. Ajusta según tu backend.
-        // Basado en tu código Go anterior: c.JSON(200, gin.H{"user": ...})
-        const user = response.user || response;
+  // ✅ NUEVO MÉTODO CRÍTICO: Verifica si hay cookie válida al iniciar la app
+  checkAuthStatus(): Observable<boolean> {
+    this.isCheckingAuth.set(true);
+    return this.http.get<{ user: UserModel }>(`${this.apiUrl}/auth/me`, { withCredentials: true }).pipe(
+      map((response) => {
+        if (response && response.user) {
+          // Si el backend dice OK, guardamos el usuario
+          this.updateUser(response.user);
+          return true;
+        }
+        return false;
+      }),
+      catchError(() => {
+        // Si falla (401), limpiamos todo por seguridad
+        this.logout();
+        return of(false);
+      }),
+      tap(() => this.isCheckingAuth.set(false))
+    );
+  }
 
+  getProfile() {
+    return this.http.get<{ user: UserModel }>(`${this.apiUrl}/auth/me`, { withCredentials: true }).pipe(
+      tap((response: any) => {
+        const user = response.user || response;
         this.updateUser(user);
       })
     );
   }
 
   login(credentials: LoginCredentials) {
-    return this.http.post(`${this.apiUrl}/login`, credentials).pipe(
+    // Importante: withCredentials: true para que la cookie se guarde
+    return this.http.post(`${this.apiUrl}/login`, credentials, { withCredentials: true }).pipe(
       tap((response: any) => {
-        // Ajusta si tu login devuelve { user: ..., token: ... }
-        const user = response.user || response;
-        this.updateUser(user);
+        // Al loguear, hacemos un fetch inmediato del perfil completo para tener el estado de MP
+        // O si el login ya devuelve el user completo, úsalo.
+        // Por seguridad, llamamos a checkAuthStatus tras el login exitoso
+        this.checkAuthStatus().subscribe();
       })
     );
   }
 
   logout() {
+    // 1. Limpieza local inmediata (para que la UI reaccione rápido)
     this.currentUser.set(null);
     if (typeof localStorage !== 'undefined') {
       localStorage.removeItem('user');
-      // También borramos el token si lo guardaras aparte
-      localStorage.removeItem('token');
+      // Token ya no se usa en local, es cookie httpOnly
     }
+
+    // 2. Avisar al backend para borrar la cookie
+    this.http.post(`${this.apiUrl}/logout`, {}, { withCredentials: true }).subscribe();
   }
 
-  // Helper privado para no repetir código
   private updateUser(user: UserModel) {
     this.currentUser.set(user);
-    // if (typeof localStorage !== 'undefined') {
-    //   localStorage.setItem('user', JSON.stringify(user));
-    // }
+    // Guardar en localStorage solo como caché visual, no como fuente de verdad
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('user', JSON.stringify(user));
+    }
   }
 }
