@@ -2,9 +2,7 @@
     class="bg-white w-full h-full md:w-[500px] md:h-auto md:rounded-[24px] p-6 md:p-8 flex flex-col gap-6 shadow-2xl overflow-hidden border border-green-50 mx-auto">
 
     <div class="flex justify-between items-center border-b border-slate-100 pb-4">
-        <h1 class="text-2xl font-black text-slate-800 tracking-tight">
-            {{ isEditing() ? 'Editar Venta' : 'Nueva Venta' }}
-        </h1>
+        <h1 class="text-2xl font-black text-slate-800 tracking-tight">Editar Venta</h1>
         <button (click)="close()"
             class="w-8 h-8 rounded-full bg-slate-50 hover:bg-red-50 text-slate-400 hover:text-red-500 flex items-center justify-center transition-colors font-bold">
             ✕
@@ -19,9 +17,8 @@
                 <div class="relative">
                     <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
                     <input
-                        class="w-full bg-slate-50 border-2 border-slate-100 rounded-xl p-3 pl-7 text-lg font-bold text-slate-800 focus:outline-none focus:border-green-400 focus:bg-white transition-all placeholder:text-slate-300"
-                        [(ngModel)]="amount" placeholder="0" type="number" id="amount"
-                        (keydown)="preventAlphabetical($event)">
+                        class="w-full bg-slate-50 border-2 border-slate-100 rounded-xl p-3 pl-7 text-lg font-bold text-slate-800 focus:outline-none focus:border-blue-400 focus:bg-white transition-all placeholder:text-slate-300"
+                        [(ngModel)]="amount" type="number" (keydown)="preventAlphabetical($event)">
                 </div>
             </div>
 
@@ -29,8 +26,8 @@
                 <label class="text-xs font-bold text-slate-400 uppercase">Método de Pago</label>
                 <div class="relative">
                     <select
-                        class="w-full appearance-none bg-slate-50 border-2 border-slate-100 rounded-xl p-3 font-medium text-slate-700 focus:outline-none focus:border-green-400 focus:bg-white transition-all cursor-pointer"
-                        [(ngModel)]="type" name="type" id="type">
+                        class="w-full appearance-none bg-slate-50 border-2 border-slate-100 rounded-xl p-3 font-medium text-slate-700 focus:outline-none focus:border-blue-400 focus:bg-white transition-all cursor-pointer"
+                        [(ngModel)]="type" name="type">
                         <option [value]="SellType.CASH">💵 {{SellType.CASH}}</option>
                         <option [value]="SellType.TRANSFER">🏦 {{SellType.TRANSFER}}</option>
                         <option [value]="SellType.CREDIT">💳 {{SellType.CREDIT}}</option>
@@ -42,18 +39,19 @@
         </div>
 
         <div class="flex flex-col gap-2">
-            <label class="text-xs font-bold text-slate-400 uppercase">Comentarios (Opcional)</label>
-            <textarea [(ngModel)]="comments" name="comments" id="comments" placeholder="Detalles de la venta..."
-                class="w-full bg-slate-50 border-2 border-slate-100 rounded-xl p-3 font-medium text-slate-700 focus:outline-none focus:border-green-400 focus:bg-white transition-all resize-none h-24"></textarea>
+            <label class="text-xs font-bold text-slate-400 uppercase">Comentarios</label>
+            <textarea [(ngModel)]="comments" name="comments" placeholder="Detalles de la venta..."
+                class="w-full bg-slate-50 border-2 border-slate-100 rounded-xl p-3 font-medium text-slate-700 focus:outline-none focus:border-blue-400 focus:bg-white transition-all resize-none h-24"></textarea>
         </div>
 
-        @if(isEditing() && originalSell?.history && originalSell!.history!.length > 0) {
-        <div class="bg-orange-50 rounded-xl p-4 border border-orange-100">
-            <span class="text-xs font-bold text-orange-700 block mb-2 uppercase tracking-wide">Historial de
-                Cambios</span>
+        @if(originalSell?.history && originalSell!.history!.length > 0) {
+        <div class="bg-blue-50 rounded-xl p-4 border border-blue-100">
+            <span class="text-xs font-bold text-blue-700 block mb-2 uppercase tracking-wide flex items-center gap-2">
+                <span>🕒</span> Historial de Cambios
+            </span>
             <div class="flex flex-col gap-2 max-h-32 overflow-y-auto pr-2 custom-scrollbar">
                 @for(change of originalSell!.history; track $index) {
-                <div class="text-xs text-orange-800/80 border-b border-orange-200/50 last:border-0 pb-1">
+                <div class="text-xs text-blue-800/80 border-b border-blue-200/50 last:border-0 pb-1">
                     <span class="font-bold">{{ change.date | date:'dd/MM HH:mm' }}:</span>
                     <span>{{ change.field }}</span>
                     <span class="line-through opacity-60 mx-1">{{ change.oldValue }}</span>
@@ -67,11 +65,16 @@
     </div>
 
     <div class="flex justify-end gap-3 mt-auto pt-4 border-t border-slate-100">
-        <button (click)="save(amount(), type(), comments())"
-            class="px-8 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-bold shadow-lg shadow-green-200 transition-all transform active:scale-95 flex items-center gap-2">
-            Crear Venta
-        </button>
         <button (click)="close()"
             class="px-6 py-3 rounded-xl font-bold text-slate-500 hover:bg-slate-100 transition-colors">
             Cancelar
         </button>
+        <button (click)="save()"
+            class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-lg shadow-blue-200 transition-all transform active:scale-95 flex items-center gap-2">
+            <span>Guardar Cambios</span>
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path d="M5 13l4 4L19 7"></path>
+            </svg>
+        </button>
+    </div>
+</div>

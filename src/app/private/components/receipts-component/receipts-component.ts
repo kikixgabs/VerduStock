@@ -4,7 +4,7 @@ import { Receipt, Status } from '../../models/receipts-model';
 import { ModalService } from '../../../global/services/modal-service/modal-service';
 import { OperationDetailsComponent } from '../operation-details-component/operation-details-component';
 import { ReceiptsService } from '@app/private/services/receipts-service/receipts-service';
-import { AuthService } from '@app/global/services/auth-service/auth-service'; // ✅ Importamos Auth
+import { AuthService } from '@app/global/services/auth-service/auth-service';
 
 @Component({
   selector: 'app-receipts-component',
@@ -16,13 +16,15 @@ import { AuthService } from '@app/global/services/auth-service/auth-service'; //
 export class ReceiptsComponent implements OnInit {
   private modalService = inject(ModalService);
   private receiptsService = inject(ReceiptsService);
-  private authService = inject(AuthService); // ✅ Inyectamos Auth
+  private authService = inject(AuthService);
+
+  // ✅ CORRECCIÓN: Exponemos el Enum para usarlo en el HTML
+  protected readonly Status = Status;
 
   receipts = signal<Receipt[]>([]);
   isLoading = signal(true);
   isSyncing = signal(false);
 
-  // ✅ Nueva señal computada: ¿Está conectado Mercado Pago?
   isMpConnected = computed(() => {
     return !!this.authService.currentUser()?.mpAccountConnected;
   });
@@ -59,6 +61,7 @@ export class ReceiptsComponent implements OnInit {
     this.modalService.open(OperationDetailsComponent, receipt);
   }
 
+  // ✅ CORRECCIÓN: Usamos el Enum en el switch
   getStatusClass(status: Status): string {
     switch (status) {
       case Status.PENDING: return 'bg-yellow-100 text-yellow-800 border-yellow-200';
@@ -69,7 +72,7 @@ export class ReceiptsComponent implements OnInit {
   }
 
   syncNow() {
-    if (!this.isMpConnected()) return; // Protección extra
+    if (!this.isMpConnected()) return;
 
     this.isSyncing.set(true);
     this.receiptsService.syncTransfers().subscribe({

@@ -1,6 +1,7 @@
 import { Component, HostListener, ElementRef, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Product, ProductType, Measurement } from '../../models/index';
+import { FormsModule } from '@angular/forms'; // ✅ Importamos FormsModule para el buscador
+import { Product, ProductType } from '../../models/index';
 import { ModalService } from '@app/global/services/modal-service/modal-service';
 import { StockService } from '@app/private/services/stock-service/stock-service';
 import { EditComponent } from '../edit-component/edit-component/edit-component';
@@ -10,7 +11,7 @@ import { AnimateClickDirective } from 'ngx-gsap'
 @Component({
   selector: 'app-stock-control',
   standalone: true,
-  imports: [CommonModule, AnimateClickDirective],
+  imports: [CommonModule, AnimateClickDirective, FormsModule], // ✅ FormsModule agregado
   templateUrl: './stock-control.html',
   styleUrls: ['./stock-control.css'],
 })
@@ -22,7 +23,16 @@ export class StockControlComponent {
   // --------------------- PRODUCTOS ---------------------
   products = this.stockService.products;
 
-  stockFiltered = computed(() => this.products().filter(p => p.loaded));
+  // ✅ Nuevo Signal para el buscador
+  searchTerm = signal('');
+
+  // ✅ Filtro Combinado: (Cargados) AND (Coincide búsqueda)
+  stockFiltered = computed(() => {
+    const term = this.searchTerm().toLowerCase();
+    return this.products().filter(p =>
+      p.loaded && p.name.toLowerCase().includes(term)
+    );
+  });
 
   // Categorías fijas
   categories = [
@@ -34,16 +44,14 @@ export class StockControlComponent {
 
   hoveredCategory = signal<ProductType | null>(null);
 
-  ngOnInit(): void {
-    // Data is loaded in MainLayout
-  }
-
   // --------------------- MENU STATE ---------------------
   menuOpen = signal(false);
   menuHovering = signal(false);
   private hoverTimeout: any;
 
   constructor(private host: ElementRef) { }
+
+  ngOnInit(): void { }
 
   // --------------------- LABELS ---------------------
   categoryLabel(type: ProductType): string {
@@ -66,7 +74,6 @@ export class StockControlComponent {
     const open = !this.menuOpen();
     this.menuOpen.set(open);
     if (open) {
-      // Default hover on first category if opening
       this.hoveredCategory.set(this.categories[0]);
     }
   }
@@ -95,31 +102,28 @@ export class StockControlComponent {
     this.hoveredCategory.set(type);
   }
 
+  stopEvent(event: Event) {
+    event.stopPropagation();
+  }
+
   // --------------------- STOCK ---------------------
 
   addAllCategoryProduct(type: ProductType) {
     const toAdd = this.products().filter(
       p => p.type === type && !p.loaded
     );
-
     if (!toAdd.length) return;
-
-    // Sync with backend (one by one as per current API)
     toAdd.forEach(p => {
       this.stockService.updateProduct({ ...p, loaded: true }).subscribe();
     });
   }
 
+  // ... (Resto de funciones igual: removeCategoryProduct, addOneProduct, removeOneProduct, editProduct, saveStock)
+
   removeCategoryProduct(type: ProductType) {
-    const toRemove = this.products().filter(
-      p => p.type === type && p.loaded
-    );
-
+    const toRemove = this.products().filter(p => p.type === type && p.loaded);
     if (!toRemove.length) return;
-
-    toRemove.forEach(p => {
-      this.stockService.updateProduct({ ...p, loaded: false }).subscribe();
-    });
+    toRemove.forEach(p => this.stockService.updateProduct({ ...p, loaded: false }).subscribe());
   }
 
   addOneProduct(product: Product) {

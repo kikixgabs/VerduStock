@@ -1,52 +1,81 @@
-<div class="min-h-screen bg-green-200 flex flex-col font-sans">
+<div class="min-h-screen bg-[#f0fdf4] font-sans text-slate-800 flex flex-col pb-20">
 
-    <h1 class="text-4xl md:text-6xl text-center mt-14 md:mt-4 font-bold text-gray-800 relative">
-        VerduStock
+    <header
+        class="bg-white/80 backdrop-blur-md border-b border-green-100 sticky top-0 z-50 px-4 py-3 shadow-sm transition-all">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
 
-        <div class="absolute -top-10 right-4 md:top-0 md:right-8 flex items-center gap-2 md:h-full">
+            <div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-start">
+                <div class="flex items-center gap-2">
+                    <div
+                        class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white text-xl shadow-lg shadow-green-200 transform hover:rotate-12 transition-transform duration-300">
+                        🥑
+                    </div>
+                    <h1 class="text-xl font-black text-green-900 tracking-tight leading-none">
+                        Verdu<span class="text-green-600 font-medium">Stock</span>
+                    </h1>
+                </div>
 
-            <button (click)="logout()" title="Cerrar Sesión"
-                class="flex items-center justify-center bg-white text-red-500 hover:bg-red-500 hover:text-white border border-red-200 p-2 rounded-lg shadow transition-all duration-200 group">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                    <polyline points="16 17 21 12 16 7"></polyline>
-                    <line x1="21" y1="12" x2="9" y2="12"></line>
-                </svg>
-                <span class="hidden md:block ml-2 text-sm font-bold">Salir</span>
-            </button>
+            </div>
 
-            <button (click)="connectMercadoPago()" [disabled]="mercadoPagoConnected()"
-                [class.bg-blue-500]="!mercadoPagoConnected()" [class.hover:bg-blue-600]="!mercadoPagoConnected()"
-                [class.text-white]="!mercadoPagoConnected()" [class.bg-gray-200]="mercadoPagoConnected()"
-                [class.text-gray-500]="mercadoPagoConnected()"
-                class="flex text-xs md:text-sm px-3 py-1.5 md:px-4 md:py-2 rounded-lg font-bold shadow transition-colors items-center gap-2">
-                @if(mercadoPagoConnected()) {
-                <span>✅</span> <span class="hidden sm:inline">MP Conectado</span>
-                } @else {
-                <span>🔗</span> <span class="hidden sm:inline">Conectar MP</span>
-                }
-            </button>
+            <nav
+                class="bg-white p-1.5 rounded-full shadow-inner border border-green-50 flex items-center gap-1 overflow-x-auto w-full md:w-auto max-w-full">
+
+                <a routerLink="stock-control"
+                    routerLinkActive="bg-green-100 text-green-700 shadow-sm ring-1 ring-green-200"
+                    class="flex-1 md:flex-none px-6 py-2 rounded-full text-sm font-bold text-slate-400 hover:text-green-600 hover:bg-green-50 transition-all duration-200 whitespace-nowrap text-center">
+                    📦 Stock
+                </a>
+
+                <a routerLink="cashier-control"
+                    routerLinkActive="bg-blue-100 text-blue-700 shadow-sm ring-1 ring-blue-200"
+                    class="flex-1 md:flex-none px-6 py-2 rounded-full text-sm font-bold text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 whitespace-nowrap text-center">
+                    💰 Caja
+                </a>
+
+                <a routerLink="receipts"
+                    routerLinkActive="bg-purple-100 text-purple-700 shadow-sm ring-1 ring-purple-200"
+                    class="flex-1 md:flex-none px-6 py-2 rounded-full text-sm font-bold text-slate-400 hover:text-purple-600 hover:bg-purple-50 transition-all duration-200 whitespace-nowrap text-center">
+                    🧾 Recibos
+                </a>
+
+            </nav>
+
+            <div class="flex items-center gap-3 w-full md:w-auto justify-end">
+
+                <button (click)="connectMercadoPago()" [disabled]="mercadoPagoConnected()"
+                    class="flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-bold transition-all shadow-sm border"
+                    [class]="mercadoPagoConnected() 
+                        ? 'bg-green-50 text-green-700 border-green-200 cursor-default' 
+                        : 'bg-blue-500 text-white border-blue-600 hover:bg-blue-600 hover:shadow-blue-200 shadow-md transform hover:-translate-y-0.5'">
+
+                    @if(mercadoPagoConnected()) {
+                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                    <span>Conectado</span>
+                    } @else {
+                    <span>🔗</span>
+                    <span>Vincular MP</span>
+                    }
+                </button>
+
+                <div class="h-8 w-px bg-green-100 mx-1"></div>
+
+                <button (click)="logout()"
+                    class="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-colors"
+                    title="Cerrar Sesión">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                </button>
+            </div>
+
         </div>
-    </h1>
+    </header>
 
-    <nav
-        class="sticky top-4 z-50 mx-auto w-[95%] max-w-2xl mt-4 bg-white/90 backdrop-blur-xl border border-white/20 shadow-lg rounded-2xl p-1.5 flex justify-center gap-1">
-        <a routerLink="stock-control" routerLinkActive="bg-green-50 text-green-700 shadow-sm ring-1 ring-green-200"
-            class="flex-1 flex items-center justify-center text-center px-2 py-3 rounded-xl text-sm font-bold text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition-all duration-300 outline-none select-none">
-            Control de Stock
-        </a>
-        <a routerLink="cashier-control" routerLinkActive="bg-blue-50 text-blue-700 shadow-sm ring-1 ring-blue-200"
-            class="flex-1 flex items-center justify-center text-center px-2 py-3 rounded-xl text-sm font-bold text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition-all duration-300 outline-none select-none">
-            Caja
-        </a>
-        <a routerLink="receipts" routerLinkActive="bg-purple-50 text-purple-700 shadow-sm ring-1 ring-purple-200"
-            class="flex-1 flex items-center justify-center text-center px-2 py-3 rounded-xl text-sm font-bold text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition-all duration-300 outline-none select-none">
-            Recibos
-        </a>
-    </nav>
-
-    <main class="flex-1 p-4 md:p-6 lg:p-8 max-w-7xl mx-auto w-full animate-fade-in">
+    <main class="flex-1 max-w-6xl mx-auto w-full px-4 mt-8 animate-fade-in">
         <router-outlet></router-outlet>
     </main>
+
 </div>

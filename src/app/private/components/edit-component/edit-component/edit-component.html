@@ -1,35 +1,43 @@
 <div (click)="$event.stopPropagation()"
-    class="bg-white p-6 rounded-lg w-[90%] max-w-[400px] flex flex-col gap-4 shadow-xl mx-auto">
-    <h1 class="text-xl font-bold text-gray-800">Editar Producto</h1>
+    class="bg-white p-8 rounded-[24px] w-[95%] max-w-[400px] flex flex-col gap-6 shadow-2xl animate-fade-in mx-auto border border-green-50">
+
+    <div class="flex flex-col gap-1 border-b border-slate-100 pb-4">
+        <h2 class="text-sm font-bold text-green-600 uppercase tracking-wider">Editar Producto</h2>
+        <h1 class="text-3xl font-black text-slate-800">{{data.name}}</h1>
+    </div>
 
     <div class="flex flex-col gap-2">
-        <div class="text-2xl font-bold text-gray-600">
-            {{data.name}}
+        <label class="text-xs font-bold text-slate-400 uppercase">Stock Actual</label>
+        <div class="relative">
+            <input type="number" [(ngModel)]="stockValue" placeholder="0"
+                class="w-full bg-slate-50 border-2 border-slate-100 text-slate-800 text-lg font-bold rounded-xl p-3 focus:outline-none focus:border-green-400 focus:bg-white transition-all placeholder:text-slate-300" />
+            <div class="absolute inset-y-0 right-4 flex items-center pointer-events-none">
+                <span class="text-slate-400 font-bold text-xs">{{data.measurement}}</span>
+            </div>
         </div>
     </div>
 
     <div class="flex flex-col gap-2">
-        <label class="text-sm font-medium text-gray-600">Stock</label>
-
-        <input type="number" [(ngModel)]="stockValue" placeholder="0"
-            class="border border-gray-300 rounded p-2 focus:outline-none focus:border-blue-500" />
+        <label class="text-xs font-bold text-slate-400 uppercase">Unidad de Medida</label>
+        <div class="relative">
+            <select [(ngModel)]="data.measurement" (click)="$event.stopPropagation()"
+                class="w-full appearance-none bg-slate-50 border-2 border-slate-100 text-slate-700 font-bold rounded-xl p-3 focus:outline-none focus:border-green-400 focus:bg-white transition-all cursor-pointer">
+                @for(measurement of measurements; track $index){
+                <option [value]="measurement">{{ measurement }}</option>
+                }
+            </select>
+            <div class="absolute inset-y-0 right-4 flex items-center pointer-events-none text-slate-400">▼</div>
+        </div>
     </div>
 
-    <div class="flex flex-col gap-2">
-        <label class="text-sm font-medium text-gray-600">Medida</label>
-        <select [(ngModel)]="data.measurement" (click)="$event.stopPropagation()"
-            class="border border-gray-300 rounded p-2 focus:outline-none focus:border-blue-500">
-            @for(measurement of measurements; track $index){
-            <option [value]="measurement">{{ measurement }}</option>
-            }
-        </select>
-    </div>
-
-    <div class="flex justify-end gap-2 mt-4">
-        <button (click)="close()"
-            class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition-colors">Cancelar</button>
-
+    <div class="flex justify-end gap-3 mt-4 pt-4 border-t border-slate-100">
         <button (click)="save()"
-            class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">Guardar</button>
+            class="px-8 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-bold shadow-lg shadow-green-200 transition-all transform active:scale-95">
+            Guardar
+        </button>
+        <button (click)="close()"
+            class="px-6 py-3 rounded-xl font-bold text-slate-500 hover:bg-slate-100 transition-colors">
+            Cancelar
+        </button>
     </div>
 </div>

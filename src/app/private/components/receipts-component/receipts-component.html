@@ -1,73 +1,91 @@
-<div class="w-full flex flex-col gap-6 p-2 md:p-4 mx-auto">
+<div class="w-full max-w-6xl mx-auto flex flex-col gap-8 animate-fade-in">
 
-    <div class="flex flex-col justify-center items-center relative">
-        <h1 class="text-2xl font-bold text-gray-800">Recibos de Transferencias</h1>
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+        <div>
+            <h1 class="text-3xl font-black text-slate-800 tracking-tight">Recibos</h1>
+            <p class="text-slate-500 font-medium">Historial de transferencias Mercado Pago</p>
+        </div>
 
         <button (click)="syncNow()" [disabled]="isSyncing() || !isMpConnected()" [class.bg-blue-600]="isMpConnected()"
-            [class.hover:bg-blue-700]="isMpConnected()" [class.bg-gray-400]="!isMpConnected()"
-            class="mt-2 flex items-center gap-2 px-4 py-2 text-white rounded-lg text-sm font-bold transition-all disabled:opacity-70 disabled:cursor-not-allowed">
+            [class.hover:bg-blue-700]="isMpConnected()" [class.bg-slate-200]="!isMpConnected()"
+            [class.text-slate-400]="!isMpConnected()"
+            class="flex items-center gap-3 px-6 py-3 text-white rounded-2xl text-sm font-bold shadow-md transition-all active:scale-95 disabled:shadow-none">
 
-            @if (isMpConnected()) {
-            <span [class.animate-spin]="isSyncing()">↻</span>
-            }
+            @if (isSyncing()) { <span class="animate-spin">⟳</span> }
+            @else if (!isMpConnected()) { <span>⚠️</span> }
+            @else { <span>🔄</span> }
 
-            @if (!isMpConnected()) {
-            <span>⚠️ Cuenta no vinculada</span>
-            } @else {
-            {{ isSyncing() ? 'Buscando...' : 'Sincronizar Transferencias' }}
-            }
+            <span>{{ !isMpConnected() ? 'Vincular MP primero' : (isSyncing() ? 'Sincronizando...' : 'Sincronizar Pagos')
+                }}</span>
         </button>
-
-        @if (!isMpConnected()) {
-        <p class="text-xs text-gray-500 mt-1">Vincula Mercado Pago arriba a la derecha para usar esta función.</p>
-        }
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         @for (receipt of receipts(); track receipt.payment_id) {
-        <div
-            class="bg-gray-50 p-4 rounded-lg border border-gray-100 shadow-sm hover:shadow-md transition-shadow flex flex-col gap-3">
 
-            <div class="flex justify-between items-center">
-                <span class="text-xs text-gray-500 font-medium whitespace-nowrap">
-                    {{ receipt.date | date:'mediumDate' }} • {{ receipt.date | date:'shortTime' }}
-                </span>
-                <span class="text-xs px-2.5 py-1 rounded-full border font-bold {{ getStatusClass(receipt.status) }}">
-                    {{ receipt.status }}
-                </span>
+        <div class="group bg-white rounded-[24px] border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col relative overflow-hidden cursor-pointer h-full"
+            (click)="openDetails(receipt)">
+
+            <div class="absolute left-0 top-0 bottom-0 w-1.5 transition-colors"
+                [class.bg-green-500]="receipt.status === Status.COMPLETED"
+                [class.bg-yellow-400]="receipt.status === Status.PENDING"
+                [class.bg-red-500]="receipt.status === Status.CANCELLED">
             </div>
 
-            <div class="flex justify-between items-end">
-                <div class="flex flex-col gap-1 overflow-hidden pr-4">
-                    <span class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Cliente</span>
-                    <div class="flex items-center gap-2">
-                        <div
-                            class="w-6 h-6 rounded-full bg-linear-to-br from-gray-200 to-gray-300 flex items-center justify-center text-gray-600 font-bold text-xs shrink-0">
-                            {{ receipt.personData.name.charAt(0).toUpperCase() }}
-                        </div>
-                        <span class="text-sm font-semibold text-gray-800 truncate">{{ receipt.personData.name }}</span>
+            <div class="p-6 flex flex-col gap-4 h-full">
+                <div class="flex justify-between items-start">
+                    <div class="flex flex-col">
+                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Fecha</span>
+                        <span class="font-bold text-slate-700">
+                            {{ receipt.date | date:'dd MMM' }} <span class="text-slate-300 mx-1">|</span> {{
+                            receipt.date | date:'HH:mm' }}
+                        </span>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full text-[10px] uppercase font-black tracking-wide border"
+                        [class.bg-green-50]="receipt.status === Status.COMPLETED"
+                        [class.text-green-700]="receipt.status === Status.COMPLETED"
+                        [class.border-green-100]="receipt.status === Status.COMPLETED"
+                        [class.bg-yellow-50]="receipt.status === Status.PENDING"
+                        [class.text-yellow-700]="receipt.status === Status.PENDING"
+                        [class.bg-red-50]="receipt.status === Status.CANCELLED"
+                        [class.text-red-700]="receipt.status === Status.CANCELLED">
+                        {{ receipt.status }}
+                    </span>
+                </div>
+
+                <div class="flex flex-col items-center justify-center py-2">
+                    <span class="text-4xl font-black text-slate-800 tracking-tight">{{ receipt.amount | currency
+                        }}</span>
+                    <span class="text-xs font-bold text-blue-500 bg-blue-50 px-2 py-0.5 rounded mt-2">
+                        #{{ receipt.payment_id | slice:0:8 }}...
+                    </span>
+                </div>
+
+                <div class="mt-auto pt-4 border-t border-slate-50 flex items-center gap-3">
+                    <div
+                        class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold text-xs border border-slate-200">
+                        {{ receipt.personData.name.charAt(0).toUpperCase() }}
+                    </div>
+                    <div class="flex flex-col overflow-hidden">
+                        <span class="text-[10px] text-slate-400 font-bold uppercase">Pagado por</span>
+                        <span class="text-xs font-bold text-slate-700 truncate">{{ receipt.personData.name }}</span>
                     </div>
                 </div>
-                <div class="flex flex-col items-end shrink-0">
-                    <span class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Monto</span>
-                    <span class="text-xl font-bold text-gray-800">{{ receipt.amount | currency }}</span>
-                </div>
             </div>
 
-            <div class="flex justify-end pt-2 border-t border-gray-200/50">
-                <button (click)="openDetails(receipt)"
-                    class="text-xs font-semibold text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1 transition-colors">
-                    Mostrar más <span>→</span>
-                </button>
+            <div
+                class="absolute inset-0 bg-white/60 backdrop-blur-[1px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                <span
+                    class="bg-slate-900 text-white font-bold py-2 px-6 rounded-full shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-transform">Ver
+                    Detalle</span>
             </div>
-
         </div>
         }
         @empty {
         <div
-            class="col-span-full py-16 text-center text-gray-500 bg-white/50 rounded-xl border-2 border-dashed border-gray-300 flex flex-col items-center justify-center gap-2">
-            <span class="text-4xl">📭</span>
-            <span class="font-medium">No hay recibos nuevos por el momento</span>
+            class="col-span-full py-20 flex flex-col items-center justify-center text-center border-2 border-dashed border-slate-200 rounded-3xl opacity-50">
+            <span class="text-6xl mb-4 grayscale">📱</span>
+            <h3 class="text-xl font-bold text-slate-500">Sin recibos recientes</h3>
         </div>
         }
     </div>
