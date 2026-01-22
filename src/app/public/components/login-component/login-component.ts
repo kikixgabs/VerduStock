@@ -11,12 +11,12 @@ interface LoginForm {
 
 @Component({
   selector: 'app-login-component',
+  standalone: true,
   imports: [ReactiveFormsModule],
   templateUrl: './login-component.html',
   styleUrl: './login-component.css',
 })
 export class LoginComponent {
-
   authService = inject(AuthService);
   router = inject(Router);
 
@@ -26,28 +26,28 @@ export class LoginComponent {
   });
 
   loginError = signal<boolean>(false);
-  // ✅ Nueva señal para controlar el estado de carga
   isLoading = signal<boolean>(false);
 
   async onSubmit() {
-    this.loginError.set(false);
     if (this.loginForm.invalid) return;
 
-    // Activamos carga
+    this.loginError.set(false);
     this.isLoading.set(true);
 
     try {
-      await firstValueFrom(this.authService.login(this.loginForm.getRawValue()));
-      this.router.navigate(['/stock-control']);
-      // No hace falta poner false aquí porque navegamos a otra página
-    } catch (error: any) {
-      // Si falla, desactivamos carga para que pueda intentar de nuevo
-      this.isLoading.set(false);
+      // firstValueFrom esperará a que el login Y el perfil estén listos
+      const success = await firstValueFrom(this.authService.login(this.loginForm.getRawValue()));
 
+      if (success) {
+        await this.router.navigate(['/stock-control']);
+      }
+    } catch (error: any) {
+      this.isLoading.set(false);
       if (error.status === 401) {
         this.loginError.set(true);
+      } else {
+        console.error('Error de conexión:', error);
       }
-      console.log(error);
     }
   }
 }

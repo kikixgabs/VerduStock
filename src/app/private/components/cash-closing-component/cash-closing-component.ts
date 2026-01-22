@@ -55,13 +55,10 @@ export class CashClosingComponent {
   }
 
   cashClose() {
-
     this.cashService.closeCashRegister().subscribe({
       next: () => {
         this.toastService.showToast('Caja cerrada con éxito');
         this.modalService.close();
-        // Recargamos para que CashierControl vuelva a preguntar si hay MÁS cajas pendientes
-        window.location.reload();
       },
       error: () => {
         this.toastService.showToast('Error al cerrar la caja');

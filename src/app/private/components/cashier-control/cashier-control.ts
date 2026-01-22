@@ -38,10 +38,17 @@ export class CashierControl implements OnInit {
       next: (pendingBoxes) => {
         if (pendingBoxes && pendingBoxes.length > 0) {
           const oldestBox = pendingBoxes[0];
-          this.modalService.open(CashClosingComponent, {
+
+          // Ahora modalRef tendrá el método .afterClosed()
+          const modalRef = this.modalService.open(CashClosingComponent, {
             data: oldestBox.sells,
             isPastClosing: true,
             boxDate: oldestBox.date
+          });
+
+          modalRef.afterClosed().subscribe(() => {
+            // Se ejecuta cuando el modal termina su animación de cierre
+            this.checkBackendForPendingBoxes();
           });
         }
       },
@@ -75,7 +82,6 @@ export class CashierControl implements OnInit {
   });
 
   openNewSellModal() {
-    // Al crear nueva venta, no pasamos nada extra, es una venta limpia
     this.modalService.open(NewSellComponent, {});
   }
 
@@ -89,7 +95,8 @@ export class CashierControl implements OnInit {
 
   editSell(sell: Sell) {
     if (sell.isClosed) return;
-    // ✅ CAMBIO: Abrimos EditSellComponent y le pasamos la venta
     this.modalService.open(EditSellComponent, { sell });
   }
+
+
 }

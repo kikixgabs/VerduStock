@@ -2,20 +2,29 @@ import { inject, Injectable, Injector, signal } from '@angular/core';
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 import gsap from 'gsap';
+import { Subject, Observable } from 'rxjs'; // Importamos RxJS
+
+// Definimos la estructura de una instancia de modal
+interface ModalInstance {
+  overlayRef: OverlayRef;
+  afterClosedSubject: Subject<any>;
+}
 
 @Injectable({ providedIn: 'root' })
 export class ModalService {
   overlay = inject(Overlay);
   injector = inject(Injector);
-  overlayRefs: OverlayRef[] = [];
+
+  // Guardamos las instancias completas (ref + subject)
+  private modalInstances: ModalInstance[] = [];
 
   isOpen = signal(false);
   data = signal<any>(null);
 
-  async open(component: any, data?: any) {
+  // Eliminamos el 'async' de la firma para devolver el objeto inmediatamente
+  open(component: any, data?: any) {
     this.data.set(data ?? null);
 
-    // Create a new overlay for every call, stacking them
     const overlayRef = this.overlay.create({
       hasBackdrop: true,
       backdropClass: 'cdk-overlay-dark-backdrop',
@@ -23,7 +32,6 @@ export class ModalService {
       scrollStrategy: this.overlay.scrollStrategies.block(),
     });
 
-    // Clicking backdrop closes only the top-most modal
     overlayRef.backdropClick().subscribe(() => this.close());
 
     const injector = Injector.create({
@@ -34,18 +42,27 @@ export class ModalService {
     const portal = new ComponentPortal(component, null, injector);
     overlayRef.attach(portal);
 
-    this.overlayRefs.push(overlayRef);
+    // Creamos un subject específico para este modal
+    const afterClosedSubject = new Subject<any>();
+
+    this.modalInstances.push({ overlayRef, afterClosedSubject });
     this.isOpen.set(true);
+
+    // Devolvemos un objeto que tiene la función afterClosed
+    return {
+      afterClosed: () => afterClosedSubject.asObservable()
+    };
   }
 
-  async close() {
-    const overlayRef = this.overlayRefs.pop(); // Get top-most modal
-    if (!overlayRef) {
+  async close(result?: any) {
+    const instance = this.modalInstances.pop();
+    if (!instance) {
       this.isOpen.set(false);
       return;
     }
 
-    const element = overlayRef.overlayElement.querySelector('div'); // Generic selector
+    const { overlayRef, afterClosedSubject } = instance;
+    const element = overlayRef.overlayElement.querySelector('div');
 
     if (element) {
       await gsap.to(element, {
@@ -58,8 +75,10 @@ export class ModalService {
     }
 
     overlayRef.dispose();
+    this.isOpen.set(this.modalInstances.length > 0);
 
-    // Update state based on remaining modals
-    this.isOpen.set(this.overlayRefs.length > 0);
+    // Notificamos que se cerró y enviamos el resultado (si lo hay)
+    afterClosedSubject.next(result);
+    afterClosedSubject.complete();
   }
 }
